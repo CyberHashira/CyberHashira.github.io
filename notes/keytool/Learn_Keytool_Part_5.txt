@@ -1,3 +1,5 @@
+Using a CA signed certificate
+------------------------------
 
 # Generate a Private with a self-signed certificate for code signing
 keytool -genkey -alias code_signing -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -dname "CN=CodeSigning" -ext KU="digitalSignature" -ext EKU="codeSigning"
