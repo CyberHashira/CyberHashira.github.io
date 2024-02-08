@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<head>
+	<title>Cyber Hashira</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="Free video tutorials for utilities and topics related to Cryptograhy.">
+	<meta name="keywords" content="OpenSSL, PKCS#11, keytool, Cryptography, tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../css/style.css">
+
+<body>
+
+
+<h2>Learn Keytool Part 2</h2><br>
+
+
+<h3> - Simple generate key.</h3>
+<span class="cmds">keytool -genkey</span>
+<div class="notes">This command will generate a keypair using a default keystore type, filename, and location. The default keystore name is .keystore, and the default keystore location is your home directory.</div><br>
+
+
+<h3> - List content of a default keystore.</h3> 
+<span class="cmds">keytool -list</span>
+<div class="notes">This will read .keystore file in your home directory.</div><br>
+
+
+<h3> - Display verbose output</h3>
+<span class="cmds">keytool -list -v</span><br><br>
+
+
+<h3> - Display output in RFC format</h3>
+<span class="cmds">keytool -list -rfc</span><br><br>
+
+<h3> - Generating a keypair with an alias.</h3>
+<span class="cmds">keytool -genkey -alias TestingKey</span>
+<div class="notes"> Default keystore name and location will be used.</div><br>
+
+
+<h3> - Generating a keypair with some additional details.</h3>
+<span class="cmds">keytool -genkey -alias Apple -keyalg RSA -keysize 2048 -validity 365 -sigalg sha256WithRSA -dname "CN=Apple"</span><br><br>
+
+
+<h3> - Generating a keypair inside a user define keystore</h3>
+<span class="cmds">keytool -genkey -alias mySigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -keystore myStore.ks -dname "CN=mySigningKey"</span><br><br>
+
+
+<h3> - Generating an AES key using JKS keystore (Should fail).</h3>
+<span class="cmds">keytool -genseckey -alias myAesKey -keyalg AES -keysize 256 -keystore myStore.ks</span>
+<div class="notes">Keystores of type JKS does not support storing Secret Keys.</div><br>
+
+
+<h3> - Generate an AES key using JCEKS.</h3> 
+<span class="cmds">keytool -genseckey -alias myAesKey -keyalg AES -keysize 256 -keystore myStore.jce -storetype jceks</span>
+<div class="notes">JCEKS can store all types of key.</div><br>
+
+
+<h3> - Generate a DES-3 key using JCEKS</h3>
+<span class="cmds">keytool -genseckey -alias myDesKey -keyalg DESede -keystore myStore.jce -storetype jceks</span><br><br>
+
+
+<h3> - List jceks keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.jceks -storetype jceks</span><br><br>
+
+
+<h3> - Generate ECDSA key using JCEKS</h3>
+<span class="cmds">keytool -genkey -alias myECKey2 -keyalg EC -groupname secp384r1 -sigalg sha256WithECDSA -validity 730 -keystore myStore.jce -storetype jceks -dname "CN=myECKey"</span>
+<div class="notes">Get a list of ECDSA curves</div>
+<span class="cmds">openssl ecparam -list_curves</span><br><br>
+
+
+<h3> - Generate RSA key inside a PKCS12 keystore</h3>
+<span class="cmds">keytool -genkey -alias mySigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -keystore myStore.p12 -storetype PKCS12 -dname "CN=mySigningKey"</span><br><br>
+
+
+<h3> - Generate AES key inside PKCS12 keystore</h3>
+<span class="cmds">keytool -genseckey -alias myAesKey -keyalg AES -keysize 256 -keystore myStore.p12 -storetype pkcs12</span><br><br>
+
+
+<h3> - Generate ECDSA keypair inside PKCS12 keystore</h3>
+<span class="cmds">keytool -genkey -alias myECKey2 -keyalg EC -groupname secp384r1 -sigalg sha256WithECDSA -validity 730 -keystore myStore.p12 -storetype pkcs12 -dname "CN=myECKey"</span><br><br>
+
+
+<h3> - Display content of a PKCS12 keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.p12 -storetype PKCS12</span>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<head>
+    <title>Cyber Hashira | Using jarsigners.</title>
+    <meta charset="UTF-8">
+	<meta name="description" content="These are video tutorials that teaches you how to use jarsigner utility">
+	<meta name="keywords" content="jarsigner, signing jar files, keytool, jar files, java codesigning">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../css/style.css">
+
+<h1>JARSIGNER</h1><br><br>
+
+<h2> > What is a JAR files? </h3>
+<div class="notes">JAR stands for Java Archive, used for packaging all java class files in a zip format. They're primarily used for packaging large java based project containing multiple class files into one single file. These JAR files can be used as a java library or a java executable package.</div><br><br>
+<hr><br>
+
+<h2> > Working with JAR files.</h2>
+<h3> - Create a JAR file containing a single file</h3>
+<span class="cmds">jar -cf test.jar test.txt</span><br>
+
+<h3> - Creating jar of multiple files.</h3>
+<div class="notes">Command below creates ten text files.</div>
+<span class="cmds">for n in {1..10}; do echo "Hello" > file$n; done</span><br><br>
+<div class="notes">Now we'll use wildcard to archive those files into a jarfile.</div>
+<span class="cmds">jar -cf test.jar file*</span><br><br>
+
+
+<h3> - Extracting contents of a jar file.</h3>
+<span class="cmds">jar -xf test.jar</span><br><br>
+<hr>
+<br>
+<h2> > Generating key required for signing a jar file.</h2>
+<div class="notes">Create a keystore containing your signing keys.</div>
+<span class="cmds">keytool -genkey -alias signingKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 365 -keystore myStore.p12 -storetype pkcs12 -dname "CN=SigningKey,O=Home,OU=HomePKI,Email=pki@home.lab" -ext KU:C="digitalSignature" -ext EKU:C="codeSigning" -ext BC:C="ca:false"</span><br><br>
+
+<div class="notes">Preferably get it signed by a CA.</div>
+<span class="cmds">keytool -certreq -alias signingkey -keystore myStore.p12 -storetype pkcs12 -file signingKey.csr</span><br><br>
+
+<div class="notes">Generate a P7B file after getting the signed certificates.</div>
+<span class="cmds">openssl crl2pkcs7 -nocrl -certfile cacerts.cer -certfile signingKey.cer -out signingKey.p7b</span><br><br>
+
+<div class="notes">Import signed certificate into your keystore.</div>
+<span class="cmds">keytool -importcert -file signingKey.p7b -keystore myStore.p12 -storetype pkcs12 -alias signingKey</span><br><br>
+<hr><br>
+
+
+
+<h2> > Signing and Verifying a JAR File.</h2>
+
+<h3> - Verifying a signed JAR file.</h3>
+<div class="notes">Check if a jar file is signed.</div>
+<span class="cmds">jarsigner -verify ../Softwares/BouncyCastle/bcprov-ext-jdk18on-171.jar</span><br><br>
+
+<div class="notes">Check if a jar file is signed with a verbose output.</div>
+<span class="cmds">jarsigner -verify ../Softwares/BouncyCastle/bcprov-ext-jdk18on-171.jar -verbose</span><br><br>
+
+<div class="notes">Check if a jar file is signed or not with verbose output and certificates used.</div>
+<span class="cmds">jarsigner -verify ../Softwares/BouncyCastle/bcprov-ext-jdk18on-171.jar -verbose -certs</span><br><br>
+<div class="notes">Check if a jar file is signed or not with verbose output with a summary of certificates used.</div>
+<span class="cmds">jarsigner -verify ../Softwares/BouncyCastle/bcprov-ext-jdk18on-171.jar -verbose:summary -certs</span><br><br>
+
+
+
+
+<h3> - Signing a jar file</h3>
+
+<div class="notes">Use a signing key stored inside a keystore to sign a jar file</div>
+<span class="cmds">jarsigner -keystore myStore.p12 -storetype pkcs12 SolarSystem.jar signingKey</span><br><br>
+
+<div class="notes">Create a separate signed jar file after signing a jar file.</div>
+<span class="cmds">jarsigner -keystore myStore.p12 -storetype pkcs12 -signedjar SolarSystem_signed.jar SolarSystem.jar signingKey</span><br><br>
+
+<div class="notes">Add a timestamped signature to the signed jar file.</div>
+<span class="cmds">jarsigner -keystore myStore.p12 -storetype pkcs12 -signedjar SolarSystem_signed.jar -tsa http://timestamp.globalsign.com/tsa/r6advanced1 SolarSystem.jar signingKey</span><br><br>
+
+<div class="notes">If a jarfile is signed using a self-signed certificate or a private CA signed certificate then this command may result in some warning</div>
+<span class="cmds">jarsigner -verify SolarSystem_signed.jar</span><br><br>
+
+<div class="notes">If you use a truststore containing all certificates then this command will only give warning about TSA</div>
+<span class="cmds">jarsigner -verify SolarSystem_signed.jar -keystore truststore</span><br><br>
+
+<h3> - List of timestamping authorities</h3>
+<div class="notes">https://gist.github.com/Manouchehri/fd754e402d98430243455713efada710</div><br><br><br>
+</body>
+</html>

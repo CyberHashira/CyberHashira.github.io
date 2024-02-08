@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<head>
+	<title>Cyber Hashira</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="Free video tutorials for utilities and topics related to Cryptograhy.">
+	<meta name="keywords" content="OpenSSL, PKCS#11, keytool, Cryptography, tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../css/style.css">
+
+<body>
+
+<h1>Learn Keytool Part 1</h1><br>
+
+<h3> - Display contents of a JKS type keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.jks</span>
+<div class="notes">Default keystore type for Java 8 is JKS (Java KeyStore). Therefore, mentioning keystore type as JKS is not necessary</div><br>
+
+
+<h3> - Wrong way to display contents of a jceks keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.jceks</span> <i>-- (should throw an error)</i>
+<div class="notes">Default keystore type for Java 8 is JKS. if you're trying to read a JCEKS keystore then you must specify the keystore type as JCEKS.</div><br>
+
+
+<h3> - Correct way to display content of a jceks keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.jceks -storetype jceks</span>
+<div class="notes">If you need to read a non-JKS keystore then you need to specify the keystore type of that keystore.</div><br>
+
+
+<h3> - Display content of a pkcs12 keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.p12 -storetype pkcs12</span>
+<div class="notes">Please note that by default, Java version 11 and above has default keystore type set has PKCS12. If you're using Java 11 or newer then you don't need to specify pkcs12 as the keystore type.</div><br>
+
+
+<h3> - Display contents of a PKCS11 keystore a.k.a SunPKCS11</h3>
+<span class="cmds">keytool -list -keystore NONE -storetype PKCS11 -providerclass sun.security.pkcs11.SunPKCS11 -providerarg p11.cfg</span>
+<div class="notes">Example shows how to access a PKCS#11 type keystore. For e.g., SunPKCS11 and IBMPKCS11.</div>
+
+</body>
+</html>

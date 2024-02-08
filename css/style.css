@@ -1,25 +1,76 @@
 body {
-    background-color: lightblue;
-    color : black;
+    background-color: #1d0c2b;
+    color : lightyellow;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+a {
+    font-size:16pt;
+    transition: font-size 0.4s;
+    text-decoration-line: none;
+}
+
+a:link {
+    color:green;
+}
+
+a:visited {
+    color: orange;
+}
+
+a:hover {
+    color:Orange ;
+    font-size: 18pt;
+    transition: font-size 0.2s;
+}
+
+a:active {
+    color:green;
 }
 
 h1 {
     text-align: center;
+    color: orange;
 }
 
 h2 {
-    text-align: center;
+    color: gold;
 }
 
 h3 {
-    text-align: center;
+    color:whitesmoke;
 }
 
+.logo {
+    text-align: center;
+    font-size: 32pt; 
+    color:orange
+}
 .sometext {
     font-size : 12pt;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     text-indent: 20px;
+}
+.menu {
+    font-size: 16pt;
+    width: 20%;
+    text-align: center;
+}
+.yt_logo {
+    margin-left: auto;
+    margin-right: auto;
+    width: 35pt;
+}
+.cmds {
+    margin-left: 25px;
+    background-color: darkblue;
+}
+.notes {
+    margin-left: 25px;
+    font-size: 12pt;
+    font-style: italic;
+    color:lightgreen;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #itemlist {
@@ -34,8 +85,9 @@ h3 {
     border-bottom: 1px solid darkblue;
     padding: 12px;
     color: black;
-    font-size: 10pt;
-    background-color: lightgray;
+    font-size: 14pt;
+    background-color: black;
+    color:lightblue;
   }
   
 #itemlist th {

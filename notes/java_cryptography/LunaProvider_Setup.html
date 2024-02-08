@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<head>
+    <title>Cyber Hashira | Configuring Java Security Providers.</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="These video tutorials teaches you the concept of Java Security providers. You will learn what they are, how to use them and how to configure them.">
+	<meta name="keywords" content="keytool, keystore, java keytool, java keystore, sunpkcs11, LunaProvider, Java Security Providers, BouncyCastle provider">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../css/style.css">
+
+
+<h1>Setup Java Security Provider for Luna HSMs (LunaProvider)</h1>
+
+<h2>Static method of registration (Unix/Linux).</h2>
+
+<div class="notes">
+<ol>
+<li> Copy LUNA_CLIENT_DIRECTORY/jsp/lib/LunaProvider.jar into JAVA_HOME/jre/lib/ext
+<li> Create a symlink of LUNA_CLIENT_DIRECTORY/jsp/lib/libLunaAPI.so in /usr/lib
+<li> Add "com.safenetinc.luna.provider.LunaProvider" in JAVA_HOME/jre/lib/security/java.security
+<li> Create a keystore file with "slot:SLOT_LABEL" or "tokenlabel:SLOT_LABEL"
+<li>Test LunaProvider by executing keytool list command.
+</ol>
+</div>
+<span class="cmds">keytool -list -keystore keystore_file -storetype Luna</span><br><br><br>
+
+<h2>Static method of registration (Windows)</h2>
+<div class="notes">
+<ol>
+<li>Copy LunaProvider.jar into %JAVA_HOME%\jre\lib\ext
+<li>Copy LunaAPI.dll in C:\Windows\System32 or add C:\Program Files\SafeNet\LunaClient\jsp\lib into %PATH% environment variable
+<li>Add com.safenetinc.luna.provider.LunaProvider entry in %JAVA_HOME%/jre/lib/security/java.security
+<li>Create a keystore file with "slot:SLOT_NUMBER" or "tokenlabel:SLOT_LABEL" as it's content
+<li>Test LunaProvider using keytool.
+</ol>
+</div>
+<span class="cmds">keytool -list -keystore KeyStore_File -storetype Luna</span><br><br>
+
+<h2>Loading LunaProvider dynamically.</h2><br>
+
+<div class="notes">Create a keystore file with "slot:SLOT_NUMBER" or "tokenlabel:SLOT_LABEL" as its content</div><br>
+
+<div class="notes">Here's a sample command to list contents of a keystore using LunaProvider</div>
+<span class="cmds">keytool -list -keystore <KeyStore_Name> -storetype Luna -providerclass com.safenetinc.luna.provider.LunaProvider -providerpath /usr/safenet/lunaclient/jsp/lib/LunaProvider.jar -J-Djava.library.path=/usr/safenet/lunaclient/jsp/lib</span><br><br>
+
+
+<div class="notes">Generate a keypair by loading LunaProvider dynamically (Unix/Linux).</div>
+<span class="cmds">keytool -genkey -alias mySigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore keystore_file -storetype Luna -providerclass com.safenetinc.luna.provider.LunaProvider -providerpath /usr/safenet/lunaclient/jsp/lib/LunaProvider.jar -J-Djava.library.path=/usr/safenet/lunaclient/jsp/lib</span><br><br>
+
+<div class="notes">Generate a keypair by loading LunaProvider dynamically (Windows).</div>
+<span class="cmds">keytool -list -keystore <KeyStore_File> -storetype Luna -providerclass com.safenetinc.luna.provider.LunaProvider -providerpath C:\Program Files\SafeNet\LunaClient\jsp\lib\LunaProvider.jar -J-Djava.library.path=C:\Program Files\SafeNet\LunaClient\jsp\lib</span><br><br>
+
+</body></html>
+
+
+
+
+

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<head>
+	<title>Cyber Hashira</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="Free video tutorials for utilities and topics related to Cryptograhy.">
+	<meta name="keywords" content="OpenSSL, PKCS#11, keytool, Cryptography, tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../css/style.css">
+
+<h1>Generating Certificates using Keytool</h1><br><br>
+
+
+
+<h3> - Generating a keypair with self-signed certificate</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -keystore myStore.p12 -storetype PKCS12 -validity 730 -sigalg sha256WithRSA -dname "CN=Testing" -storepass env:KPWD</span>
+<div class="notes">This command generates an RSA keypair with a self-signed certificate. Both objects will be stored in a pkcs12 keystore.</div>
+
+<h3> - List contents of keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.p12 -storetype pkcs12 -storepass env:KPWD -v</span>
+<div></div><br>
+<hr><br>
+
+
+
+<h2> > Generate certificate with KeyUsage extension assigned.</h2>
+
+<h3> - Critical KeyUsage</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing" -ext KU:C="digitalSignature"</span>
+
+<h3> - Set multiple KeyUsage</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing" -ext KU:C="digitalSignature,dataEncipherment"</span>
+
+<h3> - Set Non-Critical KeyUsage</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing" -ext KU="digitalSignature,dataEncipherment"</span>
+
+<h3> - Using short forms for Key Usage</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing" -ext KU="dS,dataE"</span><br><br>
+
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext KU:critical="dS,crlS,encipherO,decipherO,kA,keyCertS,nR"</span>
+<div class="notes">
+    <ul>
+        <li>dS - digitalSignature
+        <li>dateE - dataEncipherment</li>
+        <li>crlS - crlSign</li>
+        <li>encipherO - encipherOnly</li>
+        <li>decipherO - decipherOnly</li>
+        <li>kA - keyAgreement</li>
+        <li>keyCertS - keyCertSign</li>
+        <li>nR - nonRepudiation</li>
+    </ul>
+</div>
+<hr><br>
+
+<h2> > Generating a certificate with ExtendedKeyUsage set.</h2>
+<h3> - Set Extended KeyUsage</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext KU:critical="dS,nR" -ext EKU:C="codeSigning"</span><br>
+
+<h3> - Set multiple Extended KeyUsage</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext KU:critical="digitalSignature,keyCertSign,crlSign," -ext EKU="serverAuth,clientAuth"</span>
+<div></div><br>
+<hr><br>
+
+<h2> > Generating a certificate with Basic Constraints set.</h2>
+<h3> - Set Basic Constraint</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext KU:critical="digitalSignature,keyCertSign,crlSign," -ext EKU="serverAuth,clientAuth" -ext BC="ca:true,pathlen:0"</span>
+<div class="notes">This command sets ExtendedKeyUsage to mark a certificate as CA certificate with zero path len.</div><br>
+
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext KU:critical="dS,nR" -ext EKU:C="codeSigning" -ext BC="ca:false,pathlen:0"</span><br>
+<div>This command sets ExtendedKeyUsage to mark a certificate as a non-CA certificate with zero path len.</div><br>
+<hr><br>
+
+<h2> > Generating a certificate with Subject Alternate Names set.</h2>
+<h3> - Set SubjectAlternateName with hostname.</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext SAN="DNS:cyberhashira.com"</span><br>
+
+<h3> - Set SubjectAlternateName with hostname and IP.</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext SAN="DNS:cyberhashira.com,IP:127.0.0.1"</span>
+
+<h3> - Set SubjectAlternateName with hostname, IP and email address</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext SAN="DNS:cyberhashira.com,IP:127.0.0.1,EMAIL:web-admin@cyberhashira.com"</span>
+<div></div><br>
+<hr><br>
+
+
+<h2>Generate a certificate with CDP (Crl Distribution Point) set.</h2>
+
+<h3> - Set one CDP url </h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext crl="uri:http://127.0.0.1/test.crl"</span>
+
+<h3> - Set more than one CDP</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext crl="uri:http://127.0.0.1/test.crl,uri:ftp://127.0.0.1/test.crl,uri:ldap://127.0.0.1/test.crl"</span><br>
+<div></div><br>
+<hr><br>
+
+
+<h2> > Generating a certificate with AIA (Authority Information Access) set.</h2>
+<h3> - Setting Issuer certificate path </h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext AIA="caIssuers:uri:http://cyberhashira.com/issuer.cer"</span>
+
+<h3> - Setting OCSP path</h3>
+<span class="cmds">keytool -genkey -alias testSigningKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype PKCS12 -storepass env:KPWD -dname "CN=Testing,O=Acme Inc.,OU=PKI" -ext KU:critical="dS,nR" -ext EKU:C="codeSigning" -ext BC="ca:false,pathlen:0" -ext SAN="DNS:cyberhashira.com,IP:127.0.0.1,EMAIL:web-admin@cyberhashira.com" -ext crl="uri:http://127.0.0.1/test.crl,uri:ftp://127.0.0.1/test.crl,uri:ldap://127.0.0.1/test.crl" -ext AIA="caIssuers:uri:http://cyberhashira.com/issuer.cer,ocsp:uri:http://ocsp.cyberhashira.com"</span><br><br>
+
+</body></html>

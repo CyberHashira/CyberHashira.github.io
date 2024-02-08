@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<head>
+	<title>Cyber Hashira</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="Free video tutorials for utilities and topics related to Cryptograhy.">
+	<meta name="keywords" content="OpenSSL, PKCS#11, keytool, Cryptography, tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../css/style.css">
+
+<h1>Working with CA Signed certificates.</h1>
+
+
+<h3> - Generate a Private with a self-signed certificate for code signing</h3>
+<span class="cmds">keytool -genkey -alias code_signing -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -dname "CN=CodeSigning" -ext KU="digitalSignature" -ext EKU="codeSigning"</span><br>
+
+<h3> - List contents of my newly created keystore.</h3>
+<span class="cmds">keytool -list -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -v</span><br>
+
+
+<h3> - Generate a certificate request.</h3>
+<span class="cmds">keytool -certreq -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -alias code_signing -sigalg sha256WithRSA -file codesigning.csr</span><br>
+
+<h3> - Bring the generated CSR onto the machine with an OpenSSL CA</h3>
+<span class="cmds">scp hashi@akaza:keyStores/code_signing.csr .</span><br>
+
+
+<h3> - Sign the CSR using OpenSSL CA.</h3>
+<span class="cmds">openssl ca -config myCA/myIssuing/myIssuing.cnf -extensions code_signing -days 730 -notext -md sha256 -in code_signing.csr -out code_signing.cer</span>
+
+<h3> - Pass the signed certificate to the machine that has the keystore.</h3>
+<span class="cmds">scp code_signing.cer hashi@akaza:keyStores/</span><br><br>
+<hr><br>
+
+<h2> > There are three ways to import the signed certificate into a keystore.</h2>
+<h3> 1. By using PFB bundle.</h3>
+<div class="notes">Generate a p7b file</div>
+<span class="cmds">openssl crl2pkcs7 -nocrl -certfile myRoot.cer -certfile myIssuing.cer -certfile code_signing.cer -out code_signing.p7b</span><br><br>
+
+<div class="notes">Import certificates from the p7b file into the keystore.</div>
+<span class="cmds">keytool -importcert -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -alias code_signing -file code_signing.p7b</span><br><br>
+
+
+<h3> 2. Manually import all certificates.</h3>
+<div class="notes">When manually importing a certificate, you must start from the root, followed by the issuers and the issued certificate.</div>
+<span class="cmds">keytool -importcert -alias myIssuing -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -file myIssuing.cer</span><br>
+<span class="cmds">keytool -importcert -alias myRoot -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -file myRoot.cer</span><br>
+<span class="cmds">keytool -importcert -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -alias code_signing -file code_signing.cer</span><br><br>
+
+ <h3> 3. Add CA certificates into cacerts (TrustStore of Java) and then import the signed certificates.</h3>
+<span class="cmds">sudo keytool -importcert -alias myRoot -keystore /opt/java/jdk1.8.0_333/jre/lib/security/cacerts -file myRoot.cer</span><br>
+<span class="cmds">sudo keytool -importcert -alias myIssuing -keystore /opt/java/jdk1.8.0_333/jre/lib/security/cacerts -file myIssuing.cer</span><br>
+<span class="cmds">keytool -importcert -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -alias code_signing -file code_signing.cer -trustcacerts</span><br>
+<br><br>
+</body>
+</html>

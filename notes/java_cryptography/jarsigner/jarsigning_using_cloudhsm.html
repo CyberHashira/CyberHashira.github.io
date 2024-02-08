@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<head>
+    <title>Cyber Hashira | Using Luna Cloud HSM to Sign JAR files.</title>
+    <meta charset="UTF-8">
+	<meta name="description" content="These are video tutorials that teaches you how to use jarsigner utility">
+	<meta name="keywords" content="jarsigner, signing jar files, keytool, jar files, java codesigning">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../css/style.css">
+
+<h1>Signing a JAR file using Luna Cloud HSM</h1><br><br>
+
+
+<h2>Using SunPKCS11 provider.</h2><br>
+
+<h3> - Sample configuration file for SunPKCS11.</h3>
+<div class="notes">
+<pre>
+name = CloudHSM
+library = /usr/safenet/lunaclient/lib/libCryptoki2_64.so
+slot = 0
+
+attributes(*,CKO_PRIVATE_KEY,*) = {
+  CKA_TOKEN = true
+  CKA_SIGN = true
+  CKA_SENSITIVE = true
+  CKA_PRIVATE = true
+  CKA_DECRYPT = true
+  CKA_UNWRAP = true
+  CKA_EXTRACTABLE = false
+  CKA_MODIFIABLE = true
+}
+
+attributes(*,CKO_PUBLIC_KEY,*) = {
+  CKA_VERIFY = true
+  CKA_ENCRYPT = true
+  CKA_WRAP = true
+  CKA_TOKEN = false
+}
+
+attributes(*, CKO_SECRET_KEY,*) = {
+ CKA_ENCRYPT = true
+ CKA_DECRYPT = true
+ CKA_SENSITIVE = true
+ CKA_WRAP = true
+ CKA_UNWRAP = true
+ CKA_PRIVATE = true
+ CKA_TOKEN = true
+}
+</pre>
+</div><br><br>
+
+<h3> - Generating signing key and certificates.</h3>
+<div class="notes">Generating keys for signing.</div>
+<span class="cmds">keytool -genkey -alias signingKey -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -dname "CN=Code Signing" -ext KU:C="digitalSignature" -ext EKU:C="codeSigning" -keystore NONE -storetype PKCS11 -providername SunPKCS11-CloudHSM -providerclass sun.security.pkcs11.SunPKCS11 -providerarg p11.cfg</span><br><br>
+
+<div class="notes">Generating a certificate request using the generated key.</div>
+<span class="cmds">keytool -certreq -alias signingKey -keystore NONE -storetype pkcs11 -providername SunPKCS11-CloudHSM -providerclass sun.security.pkcs11.SunPKCS11 -providerarg p11.cfg -file signingKey.csr</span><br><br>
+ 
+<div class="notes">Signing the generated Certificate Signing Request (CSR) using an OpenSSL based Certificate Authority (CA)</div>
+<span class="cmds">openssl ca -config myCA/myIssuing/myIssuing.cnf -extensions code_signing -days 730 -md sha256 -in signingKey.csr -out signingKey.cer</span><br><br>
+
+<div class="notes">Create a P7B File containing the signed certificate and the certificate chain.</div>
+<span class="cmds">openssl crl2pkcs7 -nocrl -certfile myRoot.cer -certfile myIssuing.cer -certfile signingKey.cer -out signingKey.p7b</span><br><br>
+
+<div class="notes">Importing certificates from a P7B file to SunPKCS11 keystore.</div>
+<span class="cmds">keytool -importcert -alias signingKey -keystore NONE -storetype PKCS11 -providername SunPKCS11-CloudHSM -providerclass sun.security.pkcs11.SunPKCS11 -providerarg p11.cfg -file signingKey.p7b</span><br><br>
+
+
+<div class="notes">List contents of the keystore to check it has everything you need.</div>
+<span class="cmds">keytool -list -keystore NONE -storetype PKCS11 -providerclass sun.security.pkcs11.SunPKCS11 -providerarg p11.cfg -v</span><br><br><br>
+
+<h3> - Signing a JAR file.</h3>
+<div class="notes">Check if the JAR file is already signed or not.</div>
+<span class="cmds">jarsigner -verify SolarSystem.jar</span><br><br>
+
+<div class="notes">Signing the JAR file using the generated signing key.</div>
+<span class="cmds">jarsigner -keystore NONE -storetype PKCS11 -providername SunPKCS11-CloudHSM -providerclass sun.security.pkcs11.SunPKCS11 -providerarg p11.cfg -signedjar SS_p11.jar -tsa http://timestamp.globalsign.com/tsa/r6advanced1 SolarSystem.jar signingKey</span><br><br>
+
+
+<div class="notes">Verify the signed JAR file.</div>
+<span class="cmds">jarsigner -verify SS_p11.jar -keystore truststore -verbose</span><br><br><br><br>
+
+
+<h2>Using LunaProvider (Java Security Provider for Luna HSMs) to sign a JAR file.</h2><br>
+
+<h3> - Generating keys for signing.</h3><br>
+
+<div class="notes">LunaProvider requires a dummy keystore file containing information about the slot to use.</div>
+<span class="cmds">echo "slot:0" > luna.ks</span><br><br>
+
+<div class="notes">Generate signing key using LunaProvider</div>
+<span class="cmds">keytool -genkey -alias mySigningKey -keyalg RSA -keysize 2048 -validity 730 -sigalg sha256WithRSA -dname "CN=Jar Signing" -ext KU:C="digitalSignature" -ext EKU:C="codeSigning" -keystore luna.ks -storetype Luna</span><br><br>
+
+
+<div class="notes">Generate a Certificate Signing Request (CSR).</div>
+<span class="cmds">keytool -certreq -alias mySigningKey -keystore luna.ks -storetype Luna -file signingKey.csr</span><br><br>
+
+<div class="notes">CSR signed using an OpenSSL based CA.</div>
+<span class="cmds">openssl ca -config myCA/myIssuing/myIssuing.cnf -extensions code_signing -days 730 -notext -md sha256 -in signingKey.csr -out signingKey.cer</span><br><br>
+
+
+<div class="notes">Create a P7B file containing the signed certificate and the issuers.</div>
+<span class="cmds">openssl crl2pkcs7 -nocrl -certfile myRoot.cer -certfile myIssuing.cer -certfile signingKey.cer -out signingKey.p7b</span><br><br>
+
+<div class="notes">Import all certificates from a P7B file.</div>
+<span class="cmds">keytool -importcert -keystore luna.ks -storetype Luna -alias mySigningKey -file signingKey.p7b</span><br><br><br>
+ 
+<h3> - Signing JAR file.</h3><br>
+<div class="notes">Signing the jar file using the generated signing key and certificate.</div>
+<span class="cmds">jarsigner -keystore luna.ks -storetype Luna -signedjar SS.jar -tsa http://timestamp.globalsign.com/tsa/r6advanced1 SolarSystem.jar mySigningKey</span><br><br>
+
+<div class="notes">Use this command if you want to load your LunaProvider dynamically.</div>
+<span class="cmds">jarsigner -keystore luna.ks -storetype Luna -providername LunaProvider -providerclass com.safenetinc.luna.provider.LunaProvider -J-cp -J/usr/safenet/lunaclient/jsp/lib/LunaProvider.jar:/opt/java/jdk1.8.0_333/lib/tools.jar -J-Djava.library.path=/usr/safenet/lunaclient/jsp/lib/ -signedjar SS.jar -tsa http://timestamp.globalsign.com/tsa/r6advanced1 SolarSystem.jar mySigningKey</span><br><br>
+
+<div class="notes">Verify the signed JAR file.</div>
+<span class="cmds">jarsigner -verify SS.jar -keystore truststore -verbose</span><br><br>
+</body>
+</html>
+
+

@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<head>
+	<title>Cyber Hashira</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="Free video tutorials for utilities and topics related to Cryptograhy.">
+	<meta name="keywords" content="OpenSSL, PKCS#11, keytool, Cryptography, tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../css/style.css">
+
+<body>
+
+<h1>Learn Keytool Part 3</h1>
+
+
+<h3> - Display contents of a JKS keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.jks -storepass:file pass</span>
+<div class="notes">This command lists the contents of a JKS keystore. It authenticates using a text file named 'pass' that contains the keystore password.</div><br>
+
+
+<h3> - Display contents of a JCEKS keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.jceks -storetype jceks -storepass:file pass</span>
+<div class="notes">This command lists the content of a JCEKS keystore. It authenticates using a text file containing the keystore password.</div><br>
+
+
+<h3> - Display contents of a PKCS12 keystore</h3>
+<span class="cmds">keytool -list -keystore myStore.p12 -storetype pkcs12 -storepass:file pass</span><br><br>
+
+
+<h3> - Display contents of a BouncyCastle keystore.</h3>
+<span class="cmds">keytool -list -keystore myStore.bks -storetype bks -storepass:file pass</span>
+<div class="notes">BouncyCastle provider should be configured before executing this command.</div><br>
+
+
+<h3> - Import contents of a jks keystore into a jceks keystore</h3>
+<span class="cmds">keytool -importkeystore -srckeystore myStore.jks -srcstorepass:file pass -destkeystore myStore.jceks -deststoretype jceks -deststorepass:file pass</span><br><br>
+
+
+<h3>Import contents of a jceks keystore into a PKCS12 keystore</h3>
+<span class="cmds">keytool -importkeystore -srckeystore myStore.jceks -srcstoretype jceks -srcstorepass:file pass -destkeystore myStore.p12 -deststoretype pkcs12 -deststorepass:file pass</span><br><br>
+
+
+<h3>Import contents of a PKCS12 keystore into BouncyCastle  keystore</h3>
+<span class="cmds">keytool -importkeystore -srckeystore myStore.p12 -srcstoretype pkcs12 -srcstorepass:file pass -destkeystore myStore.bks -deststoretype BKS -deststorepass:file pass -destprovidername BC</span><br><br>
+
+
+<h3>Import contents of a JCEKS keystore into BouncyCastle keystore</h3>
+<span class="cmds">keytool -importkeystore -srckeystore myStore.jceks -srcstoretype jceks -srcstorepass:file pass -destkeystore myStore.bks -deststoretype bks -deststorepass:file pass</span><br><br>
+
+
+<h3>Import contents of BouncyCastle keystore into DPOD Cloud HSM </h3>
+<span class="cmds">keytool -importkeystore -srckeystore myStore.bks -srcstoretype bks -srcstorepass:file pass -destkeystore Luna.ks -deststoretype Luna -providerclass com.safenetinc.luna.provider.LunaProvider -providerpath /usr/safenet/lunaclient/jsp/lib/LunaProvider.jar -J-Djava.library.path=/usr/safenet/lunaclient/jsp/lib/</span>
+<div class="notes">(Only if you have access to DPOD cloud HSM)</div>
+
+</body>
+</html>
