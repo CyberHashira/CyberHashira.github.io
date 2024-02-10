@@ -1,33 +1,34 @@
-//Thanks for reading DISCLAIMER.txt
+<!DOCTYPE html>
+<head>
+    <title>Cyber Hashira | PKCS#11 > get_slot_list.cpp</title>
+    <meta charset="UTF-8">
+	<meta name="description" content="This is a video tutorial series about PKCS#11. These tutorials are meant for Beginners who are new to PKCS#11 and Hardware Security Modules. Whether you're a beginner or at an advanced level of knowledge, I'm sure there will be something new for you to learn here.">
+	<meta name="keywords" content="PKCS11, PKCS#11, PKCS #11, Hardware Security Modules, SoftHSM, HSM, PKCS11 tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../css/style.css">
+<pre>
+<div class="notes">
+//Thanks for reading <a href="../../DISCLAIMER.txt" target="_blank">DISCLAIMER.txt</a>
 
 /*
-	This samples demonstrates the following :-
-    When C_Initialize is called, it tries to detect all slots and stores all that information in memory.
-    This program demonstrates that C_GetSlotInfo tries to obtain information from that memory. Here's what it tries to do.
-	- Loads PKCS #11 library and calls C_Initialize
-	- This program has a loop that repeats thrice and does the following
-		> Calls C_GetSlotInfo and pauses.
-		> When this program pauses, a user can open another terminal and create a new slot.
-		> Pressing any key continues execution of this program and C_GetSlotList is called again.
-	- After three loops this program calls C_Finalize and quits.
+        This program demonstrates how to use C_GetSlotList to get the list of all detected slots.
 */
+</div>
 
-
-#include <iostream>
-#include <cryptoki.h>
-#include <stdlib.h>
-#include <string.h>
+#include &lt;iostream&gt;
+#include &lt;cryptoki.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
 
 using namespace std;
 
-// OS Check
 #ifdef NIX
         #include <dlfcn.h>
 #else
         #include <windows.h>
 #endif
 
-// OS Check
 #ifdef NIX
         void *libHandle = 0;
 #else
@@ -39,8 +40,7 @@ CK_SLOT_ID *slots = NULL;
 const char *libPath;
 
 
-
-// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.
+<div class="notes">// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.</div>
 void loadHSMLibrary()
 {
 	libPath = getenv("P11_LIB");
@@ -80,7 +80,7 @@ void loadHSMLibrary()
 
 
 
-// Before exiting, this functions performs some memory cleanup.
+<div class="notes">// Before exiting, this functions performs some memory cleanup.</div>
 void freeResource()
 {
 	// OS Check
@@ -95,7 +95,7 @@ void freeResource()
 
 
 
-// This function checks if a requested PKCS #11 operation was a success or a failure. 
+<div class="notes">// This function checks if a requested PKCS #11 operation was a success or a failure.</div>
 void checkOperation(CK_RV rv, const char *message)
 {
 	if(rv!=CKR_OK)
@@ -109,7 +109,7 @@ void checkOperation(CK_RV rv, const char *message)
 
 
 
-// This function gets the list of all detected slots..
+<div class="notes">// This function gets the list of all detected slots.</div>
 void show_all_slots()
 {
 	CK_ULONG no_of_slots;
@@ -130,21 +130,17 @@ void show_all_slots()
 
 int main(int argc, char **argv)
 {
-    int ctr=0;
+	int ctr=0;
 	loadHSMLibrary();
 	cout << "PKCS#11 library loaded." << endl;
 	
+	// Initialize Cryptoki, call C_GetSlotList and then C_Finalize
 	checkOperation(p11Func->C_Initialize(NULL_PTR), "C_Initialize");
-    
-    do
-    {
         show_all_slots();
-        cout << "press any key to continue..." << endl;
-        cin.get();
-        ctr++;
-    }while(ctr<3);
 	checkOperation(p11Func->C_Finalize(NULL_PTR), "C_Finalize");
 
 	freeResource();
 	return 0;
 }
+
+</pre></html>

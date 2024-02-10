@@ -1,26 +1,37 @@
-//Thanks for reading DISCLAIMER.txt
+<!DOCTYPE html>
+<head>
+    <title>Cyber Hashira | PKCS#11 > CKM_AES_CBC_PAD.cpp</title>
+    <meta charset="UTF-8">
+	<meta name="description" content="This is a video tutorial series about PKCS#11. These tutorials are meant for Beginners who are new to PKCS#11 and Hardware Security Modules. Whether you're a beginner or at an advanced level of knowledge, I'm sure there will be something new for you to learn here.">
+	<meta name="keywords" content="PKCS11, PKCS#11, PKCS #11, Hardware Security Modules, SoftHSM, HSM, PKCS11 tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../../css/style.css">
+<pre>
+<div class="notes">
+//Thanks for reading <a href="../../../DISCLAIMER.txt" target="_blank">DISCLAIMER.txt</a>
 
 /*
 	This samples shows how to encrypts a plaintext and decrypts it using AES-256 key.
 	AES key used for encryption is generated as session object.
 */
 
+</div>
 
-#include <iostream>
-#include <cryptoki.h>
-#include <stdlib.h>
-#include <string.h>
+#include &lt;iostream&gt;
+#include &lt;cryptoki.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
 
 using namespace std;
 
-// OS Check
+
 #ifdef NIX
 	#include <dlfcn.h>
 #else
 	#include <windows.h>
 #endif
 
-// OS Check
 #ifdef NIX
 	void *libHandle = 0;
 #else
@@ -43,7 +54,7 @@ CK_ULONG decLen;
 
 
 
-// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.
+<div class="notes">// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.</div>
 void loadHSMLibrary()
 {
 	libPath = getenv("P11_LIB");
@@ -53,7 +64,6 @@ void loadHSMLibrary()
 		exit(1);
 	}
 
-	// OS Check	
 	#ifdef NIX
 		libHandle = dlopen(libPath, RTLD_NOW);
 	#else
@@ -67,7 +77,6 @@ void loadHSMLibrary()
 		exit(1);
 	}
 
-	// OS Check
 	#ifdef NIX
 		CK_C_GetFunctionList C_GetFunctionList = (CK_C_GetFunctionList)dlsym(libHandle,"C_GetFunctionList");
 	#else
@@ -85,7 +94,7 @@ void loadHSMLibrary()
 
 
 
-// Before exiting, this functions performs some memory cleanup.
+<div class="notes">// Before exiting, this functions performs some memory cleanup.</div>
 void freeResource()
 {
 	#ifdef NIX
@@ -98,17 +107,18 @@ void freeResource()
 }
 
 
-// Converts byte array to Hex String.
+<div class="notes">// Converts byte array to Hex String.</div>
 void printHex(CK_BYTE *bytes, int len)
 {
-	for(int ctr=0; ctr<len; ctr++)
+	for(int ctr = 0; ctr < len; ctr++)
 	{
 		printf("%02x", bytes[ctr]);
 	}
 	cout << endl;
 }
 
-// This function checks if a requested PKCS #11 operation was a success or a failure. 
+
+<div class="notes">// This function checks if a requested PKCS #11 operation was a success or a failure.</div>
 void checkOperation(CK_RV rv, const char *message)
 {
 	if(rv!=CKR_OK)
@@ -122,7 +132,7 @@ void checkOperation(CK_RV rv, const char *message)
 
 
 
-// This function connects this sample to a slot. It initializes the library, opens a new session and performs login.
+<div class="notes">// This function connects this sample to a slot. It initializes the library, opens a new session and performs login.</div>
 void connectToSlot()
 {
 	checkOperation(p11Func->C_Initialize(NULL_PTR),"C_Initialize");
@@ -132,7 +142,7 @@ void connectToSlot()
 
 
 
-// This function disconnects this sample from a slot. It first logs out of the slot, closes the session and then finalizes the library.
+<div class="notes">// This function disconnects this sample from a slot. It first logs out of the slot, closes the session and then finalizes the library.</div>
 void disconnectFromSlot()
 {
 	checkOperation(p11Func->C_Logout(hSession),"C_Logout");
@@ -142,7 +152,7 @@ void disconnectFromSlot()
 
 
 
-// This function generates an AES-256 Key.
+<div class="notes">// This function generates an AES-256 Key.</div>
 void generateAesKey()
 {
     CK_MECHANISM mech = {CKM_AES_KEY_GEN};
@@ -171,7 +181,7 @@ void generateAesKey()
 
 
 
-// This function Encrypts data using CKM_AES_CBC_PAD
+<div class="notes">// This function Encrypts data using CKM_AES_CBC_PAD</div>
 void encryptData()
 {
 	CK_MECHANISM mech = {CKM_AES_CBC_PAD, IV, sizeof(IV)-1};
@@ -185,7 +195,7 @@ void encryptData()
 
 
 
-// This function Decrypts data using CKM_AES_CBC_PAD
+<div class="notes">// This function Decrypts data using CKM_AES_CBC_PAD</div>
 void decryptData()
 {
 	CK_MECHANISM mech = {CKM_AES_CBC_PAD, IV, sizeof(IV)-1};
@@ -199,7 +209,7 @@ void decryptData()
 
 
 
-// This function shows the usage of the executable.
+<div class="notes">// This function shows the usage of the executable.</div>
 void usage(char exeName[30])
 {
 	cout << "Command usage is :-" << endl;
@@ -238,3 +248,5 @@ int main(int argc, char **argv)
 	freeResource();
 	return 0;
 }
+
+</pre></html>

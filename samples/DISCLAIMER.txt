@@ -1,0 +1,6 @@
+                                         [[ DISCLAIMER ]]
+                                       --------------------
+
+- I wrote this code for the purpose of teaching, testing, and demonstration. It is intended to be used for these purposes.
+- This code may not contain all the necessary elements for your COPY PASTA. Think before you copy/paste this code somewhere.
+- Errors, crash, public embarrasment, loss or whatever it is > NOT MY PROBLEM! NOT LIABLE! NOT RESPONSIBLE!

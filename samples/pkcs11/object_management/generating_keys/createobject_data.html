@@ -1,25 +1,37 @@
-//Thanks for reading DISCLAIMER.txt
+<!DOCTYPE html>
+<head>
+    <title>Cyber Hashira | PKCS#11 > createobject_data.cpp</title>
+    <meta charset="UTF-8">
+	<meta name="description" content="This is a video tutorial series about PKCS#11. These tutorials are meant for Beginners who are new to PKCS#11 and Hardware Security Modules. Whether you're a beginner or at an advanced level of knowledge, I'm sure there will be something new for you to learn here.">
+	<meta name="keywords" content="PKCS11, PKCS#11, PKCS #11, Hardware Security Modules, SoftHSM, HSM, PKCS11 tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../../css/style.css">
+<pre>
+<div class="notes">
+//Thanks for reading <a href="../../../DISCLAIMER.txt" target="_blank">DISCLAIMER.txt</a>
 
 /*
-	This samples shows how to generate an AES key using PKCS#11 API.
+	This samples shows how to create a data object using PKCS#11 API.
 */
+</div>
 
 
-#include <iostream>
-#include <cryptoki.h>
-#include <stdlib.h>
-#include <string.h>
+#include &lt;iostream&gt;
+#include &lt;cryptoki.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
 
 using namespace std;
 
-// OS Check
+
 #ifdef NIX
 	#include <dlfcn.h>
 #else
 	#include <windows.h>
 #endif
 
-// OS Check
+
 #ifdef NIX
 	void *libHandle = 0;
 #else
@@ -36,23 +48,22 @@ CK_OBJECT_HANDLE objHandle = 0;
 
 
 
-// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.
+<div class="notes">// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.</div>
 void loadHSMLibrary()
 {
 	libPath = getenv("P11_LIB");
 	if(libPath==NULL)
 	{
                 cout << "P11_LIB environment variable not set." << endl;
-                cout << "Set P11_LIB environment variable to pkcs11 library to the pkcs11 library to use." << endl << endl;
+                cout << "Set P11_LIB environment variable to the pkcs11 library to use." << endl << endl;
                 cout << "Example :-" << endl;
-                cout << "For Unix/Linux -" << endl;
+                cout << "On Unix/Linux : " << endl;
                 cout << "export P11_LIB=/opt/softhsm2/lib/softhsm/libsofthsm2.so" << endl;
-                cout << "For Windows -" << endl;
+                cout << "On Windows " << endl;
                 cout << "set P11_LIB=C:\\SoftHSM2\\lib\\softhsm2.dll" << endl;
 		exit(1);
 	}
 
-	// OS Check	
 	#ifdef NIX
 		libHandle = dlopen(libPath, RTLD_NOW);
 	#else
@@ -66,7 +77,7 @@ void loadHSMLibrary()
 		exit(1);
 	}
 
-	// OS Check
+	
 	#ifdef NIX
 		CK_C_GetFunctionList C_GetFunctionList = (CK_C_GetFunctionList)dlsym(libHandle,"C_GetFunctionList");
 	#else
@@ -84,7 +95,7 @@ void loadHSMLibrary()
 
 
 
-// Before exiting, this functions performs some memory cleanup.
+<div class="notes">// Before exiting, this functions performs some memory cleanup.</div>
 void freeResource()
 {
 	#ifdef NIX
@@ -98,20 +109,21 @@ void freeResource()
 
 
 
-// This function checks if a requested PKCS #11 operation was a success or a failure. 
+<div class="notes">// This function checks if a requested PKCS #11 operation was a success or a failure.</div>
 void checkOperation(CK_RV rv, const char *message)
 {
 	if(rv!=CKR_OK)
 	{
-		cout << message << " failed with : " << rv << endl;
-		printf("RV : %#08lx", rv);
+		cout << message << " failed with : " << rv;
+		printf(" | 0x%08x\n", rv);
 		freeResource();
 		exit(1);
 	}
 }
 
 
-// This function connects this sample to a slot. It initializes the library, opens a new session and performs login.
+
+<div class="notes">// This function connects this sample to a slot. It initializes the library, opens a new session and performs login.</div>
 void connectToSlot()
 {
 	checkOperation(p11Func->C_Initialize(NULL_PTR),"C_Initialize");
@@ -121,7 +133,7 @@ void connectToSlot()
 
 
 
-// This function disconnects this sample from a slot. It first logs out of the slot, closes the session and then finalizes the library.
+<div class="notes">// This function disconnects this sample from a slot. It first logs out of the slot, closes the session and then finalizes the library.</div>
 void disconnectFromSlot()
 {
 	checkOperation(p11Func->C_Logout(hSession),"C_Logout");
@@ -131,39 +143,36 @@ void disconnectFromSlot()
 
 
 
-// This function generates an AES-256 Key.
-// Token Object | Private | Sensitive | Extractable | Modifiable | Can encrypt and decrypt 
-void generateAesKey()
+<div class="notes">// This function creates a data object with the following properties.
+// token object|read-only|private object|hex-serial as value.</div>
+void createDataObject()
 {
-    CK_MECHANISM mech = {CKM_AES_KEY_GEN};
     CK_BBOOL yes = CK_TRUE;
     CK_BBOOL no = CK_FALSE;
-    CK_UTF8CHAR label[] = "aes_key";
-    CK_ULONG keySize = 32;
+    CK_UTF8CHAR label[] = "a_data_object";
+    CK_BYTE serial[] = "2af6d196af37a5bcd0fd9266d507c685";
+    CK_OBJECT_CLASS objClass = CKO_DATA;
 
     CK_ATTRIBUTE attrib[] = 
     {
+	{CKA_CLASS,	    &objClass,	sizeof(objClass)},	
         {CKA_TOKEN,         &yes,       sizeof(CK_BBOOL)},
         {CKA_PRIVATE,       &yes,       sizeof(CK_BBOOL)},
-        {CKA_SENSITIVE,     &yes,       sizeof(CK_BBOOL)},
-        {CKA_EXTRACTABLE,   &yes,       sizeof(CK_BBOOL)},
-        {CKA_MODIFIABLE,    &yes,       sizeof(CK_BBOOL)},
-        {CKA_ENCRYPT,       &yes,       sizeof(CK_BBOOL)},
-        {CKA_DECRYPT,       &yes,       sizeof(CK_BBOOL)},
-        {CKA_LABEL,         &label,     sizeof(label)},
-	{CKA_VALUE_LEN,	    &keySize,	sizeof(CK_ULONG)}
+        {CKA_MODIFIABLE,    &no,        sizeof(CK_BBOOL)},
+	{CKA_VALUE,	    &serial,	sizeof(serial)},
+        {CKA_LABEL,         &label,     sizeof(label)}
     };
-
+	
     CK_ULONG attribLen = sizeof(attrib) / sizeof(*attrib);
 
-    checkOperation(p11Func->C_GenerateKey(hSession, &mech, attrib, attribLen, &objHandle), "C_GenerateKey");
+    checkOperation(p11Func->C_CreateObject(hSession, attrib, attribLen, &objHandle), "C_CreateObject");
 
-    cout << "AES-256 Key generated as handle : " << objHandle << endl;
+    cout << "Data object created as handle : " << objHandle << endl;
 }
 
 
 
-// This function shows the usage of the executable.
+<div class="notes">// This function shows the usage of the executable.</div>
 void usage(char exeName[30])
 {
 	cout << "Command usage is :-" << endl;
@@ -188,9 +197,11 @@ int main(int argc, char **argv)
 	cout << "P11 library loaded." << endl;
 	connectToSlot();
 	cout << "Connected via session : " << hSession << endl;
-	generateAesKey();
+    	createDataObject();
 	disconnectFromSlot();
 	cout << "Disconnected from slot." << endl;
 	freeResource();
 	return 0;
 }
+
+</pre></html>

@@ -1,26 +1,38 @@
-//Thanks for reading DISCLAIMER.txt
+<!DOCTYPE html>
+<head>
+    <title>Cyber Hashira | PKCS#11 > CKM_RSA_PKCS_OAEP.cpp</title>
+    <meta charset="UTF-8">
+	<meta name="description" content="This is a video tutorial series about PKCS#11. These tutorials are meant for Beginners who are new to PKCS#11 and Hardware Security Modules. Whether you're a beginner or at an advanced level of knowledge, I'm sure there will be something new for you to learn here.">
+	<meta name="keywords" content="PKCS11, PKCS#11, PKCS #11, Hardware Security Modules, SoftHSM, HSM, PKCS11 tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../../css/style.css">
+<pre>
+<div class="notes">
+//Thanks for reading <a href="../../../DISCLAIMER.txt" target="_blank">DISCLAIMER.txt</a>
 
 /*
 	This samples shows how to encrypt some data using CKM_RSA_PKCS_OAEP mechanism.
 	Samples generates a session keypair.
 */
 
+</div>
 
-#include <iostream>
-#include <cryptoki.h>
-#include <stdlib.h>
-#include <string.h>
+#include &lt;iostream&gt;
+#include &lt;cryptoki.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
 
 using namespace std;
 
-// OS Check
+
 #ifdef NIX
 	#include <dlfcn.h>
 #else
 	#include <windows.h>
 #endif
 
-// OS Check
+
 #ifdef NIX
 	void *libHandle = 0;
 #else
@@ -42,7 +54,8 @@ CK_ULONG encLen, decLen;
 CK_RSA_PKCS_OAEP_PARAMS oaepParam = {0};
 
 
-// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.
+
+<div class="notes">// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.</div>
 void loadHSMLibrary()
 {
 	libPath = getenv("P11_LIB");
@@ -52,7 +65,6 @@ void loadHSMLibrary()
 		exit(1);
 	}
 
-	// OS Check	
 	#ifdef NIX
 		libHandle = dlopen(libPath, RTLD_NOW);
 	#else
@@ -66,7 +78,6 @@ void loadHSMLibrary()
 		exit(1);
 	}
 
-	// OS Check
 	#ifdef NIX
 		CK_C_GetFunctionList C_GetFunctionList = (CK_C_GetFunctionList)dlsym(libHandle,"C_GetFunctionList");
 	#else
@@ -83,7 +94,7 @@ void loadHSMLibrary()
 
 
 
-// Before exiting, this functions performs some memory cleanup.
+<div class="notes">// Before exiting, this functions performs some memory cleanup.</div>
 void freeResource()
 {
 	#ifdef NIX
@@ -97,7 +108,7 @@ void freeResource()
 
 
 
-// This function checks if a requested PKCS #11 operation was a success or a failure. 
+<div class="notes">// This function checks if a requested PKCS #11 operation was a success or a failure.</div>
 void checkOperation(CK_RV rv, const char *message)
 {
 	if(rv!=CKR_OK)
@@ -111,7 +122,7 @@ void checkOperation(CK_RV rv, const char *message)
 
 
 
-// This function connects this sample to a slot. It initializes the library, opens a new session and performs login.
+<div class="notes">// This function connects this sample to a slot. It initializes the library, opens a new session and performs login.</div>
 void connectToSlot()
 {
 	checkOperation(p11Func->C_Initialize(NULL_PTR),"C_Initialize");
@@ -121,7 +132,7 @@ void connectToSlot()
 
 
 
-// This function disconnects this sample from a slot. It first logs out of the slot, closes the session and then finalizes the library.
+<div class="notes">// This function disconnects this sample from a slot. It first logs out of the slot, closes the session and then finalizes the library.</div>
 void disconnectFromSlot()
 {
 	checkOperation(p11Func->C_Logout(hSession),"C_Logout");
@@ -131,7 +142,7 @@ void disconnectFromSlot()
 
 
 
-// This function generates an RSA 2048 bit Key pair.
+<div class="notes">// This function generates an RSA 2048 bit Key pair.</div>
 void generateRsaKeyPair()
 {
     CK_MECHANISM mech = {CKM_RSA_PKCS_KEY_PAIR_GEN};
@@ -174,10 +185,10 @@ void generateRsaKeyPair()
 
 
 
-// Converts a byte data to hex.
+<div class="notes">// Converts a byte data to hex.</div>
 void printHex(unsigned char *data, int size)
 {
-	for(int ctr = 0; ctr<size; ctr++)
+	for(int ctr = 0; ctr < size; ctr++)
 	{
 		printf("%02x", data[ctr]);
 	}
@@ -185,6 +196,8 @@ void printHex(unsigned char *data, int size)
 }
 
 
+
+<div class="notes">// Initialize OAEP parameters with the required values.</div>
 void initOAEP()
 {
     oaepParam.source = CKZ_DATA_SPECIFIED;
@@ -194,7 +207,9 @@ void initOAEP()
     oaepParam.mgf = CKG_MGF1_SHA1;
 }
 
-// This function encrypt data 
+
+
+<div class="notes">// This function encrypt data </div>
 void encryptData()
 {
 	initOAEP();
@@ -209,7 +224,7 @@ void encryptData()
 
 
 
-// This functiond decrypts the encrypted data
+<div class="notes">// This functiond decrypts the encrypted data</div>
 void decryptData()
 {
 	CK_MECHANISM mech = {CKM_RSA_PKCS_OAEP, &oaepParam, sizeof(oaepParam)};
@@ -222,7 +237,8 @@ void decryptData()
 }
 
 
-// This function shows the usage of the executable.
+
+<div class="notes">// This function shows the usage of the executable.</div>
 void usage(char exeName[30])
 {
 	cout << "Command usage is :-" << endl;
@@ -258,3 +274,5 @@ int main(int argc, char **argv)
 	freeResource();
 	return 0;
 }
+
+</pre></html>

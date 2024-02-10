@@ -1,4 +1,15 @@
-//Thanks for reading DISCLAIMER.txt
+<!DOCTYPE html>
+<head>
+    <title>Cyber Hashira | PKCS#11 > slot_and_token_info.cpp</title>
+    <meta charset="UTF-8">
+	<meta name="description" content="This is a video tutorial series about PKCS#11. These tutorials are meant for Beginners who are new to PKCS#11 and Hardware Security Modules. Whether you're a beginner or at an advanced level of knowledge, I'm sure there will be something new for you to learn here.">
+	<meta name="keywords" content="PKCS11, PKCS#11, PKCS #11, Hardware Security Modules, SoftHSM, HSM, PKCS11 tutorials">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../../css/style.css">
+<pre>
+<div class="notes">
+//Thanks for reading <a href="../../DISCLAIMER.txt" target="_blank">DISCLAIMER.txt</a>
 
 /*
 	This samples demonstrates the following :-
@@ -6,23 +17,21 @@
 	- Retrieves the list of all available slots with tokens.
 	- Displays information about those slots and tokens.
 */
+</div>
 
-
-#include <iostream>
-#include <cryptoki.h>
-#include <stdlib.h>
-#include <string.h>
+#include &lt;iostream&gt;
+#include &lt;cryptoki.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
 
 using namespace std;
 
-// OS Check
 #ifdef NIX
         #include <dlfcn.h>
 #else
         #include <windows.h>
 #endif
 
-// OS Check
 #ifdef NIX
         void *libHandle = 0;
 #else
@@ -35,7 +44,7 @@ const char *libPath;
 
 
 
-// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.
+<div class="notes">// This function loads a pkcs11 library. Path of the pkcs11 library is read using P11_LIB environment variable.</div>
 void loadHSMLibrary()
 {
 	libPath = getenv("P11_LIB");
@@ -75,7 +84,7 @@ void loadHSMLibrary()
 
 
 
-// Before exiting, this functions performs some memory cleanup.
+<div class="notes">// Before exiting, this functions performs some memory cleanup.</div>
 void freeResource()
 {
 	// OS Check
@@ -90,7 +99,7 @@ void freeResource()
 
 
 
-// This function checks if a requested PKCS #11 operation was a success or a failure. 
+<div class="notes">// This function checks if a requested PKCS #11 operation was a success or a failure.</div>
 void checkOperation(CK_RV rv, const char *message)
 {
 	if(rv!=CKR_OK)
@@ -104,7 +113,7 @@ void checkOperation(CK_RV rv, const char *message)
 
 
 
-// This function displays information about a slot.
+<div class="notes">// This function displays information about a slot.</div>
 void show_slot_info(CK_SLOT_ID slotId)
 {
 	CK_SLOT_INFO slotInfo;
@@ -124,7 +133,7 @@ void show_slot_info(CK_SLOT_ID slotId)
 
 
 
-// This function displays information about a slot with token.
+<div class="notes">// This function displays information about a slot with token.</div>
 void show_token_info(CK_SLOT_ID slotId)
 {
 	CK_TOKEN_INFO tokenInfo;
@@ -132,10 +141,10 @@ void show_token_info(CK_SLOT_ID slotId)
 	CK_VERSION firmwareVersion;
 	checkOperation(p11Func->C_GetTokenInfo(slotId, &tokenInfo), "C_GetTokenInfo");
 	cout << "Token Information -" << endl;
-	cout << "\tLabel "; cout.write((const char*)tokenInfo.label, sizeof(tokenInfo.label)); cout <<endl;
-	cout << "\tManufacturer "; cout.write((const char*)tokenInfo.manufacturerID, sizeof(tokenInfo.manufacturerID)); cout <<endl;
-	cout << "\tModel "; cout.write((const char*)tokenInfo.model, sizeof(tokenInfo.model)); cout <<endl;
-	cout << "\tSerial "; cout.write((const char*)tokenInfo.serialNumber, sizeof(tokenInfo.serialNumber)); cout <<endl;
+	cout << "\tLabel "; cout.write((const char*)tokenInfo.label, sizeof(tokenInfo.label)); cout << endl;
+	cout << "\tManufacturer "; cout.write((const char*)tokenInfo.manufacturerID, sizeof(tokenInfo.manufacturerID)); cout << endl;
+	cout << "\tModel "; cout.write((const char*)tokenInfo.model, sizeof(tokenInfo.model)); cout << endl;
+	cout << "\tSerial "; cout.write((const char*)tokenInfo.serialNumber, sizeof(tokenInfo.serialNumber)); cout << endl;
 	cout << "\tMax Session Count " << tokenInfo.ulMaxSessionCount << endl;
 	cout << "\tSession Count " << tokenInfo.ulSessionCount << endl;
 	cout << "\tMax RW Session Count " << tokenInfo.ulMaxRwSessionCount << endl;
@@ -155,7 +164,7 @@ void show_token_info(CK_SLOT_ID slotId)
 
 
 
-// This function gets the list of all detected slots..
+<div class="notes">// This function gets the list of all detected slots..</div>
 void show_all_slots()
 {
 	CK_ULONG no_of_slots;
@@ -165,7 +174,7 @@ void show_all_slots()
 	slots = new CK_SLOT_ID[no_of_slots];
 	checkOperation(p11Func->C_GetSlotList(CK_TRUE, slots, &no_of_slots), "C_GetSlotList");
 	
-	for(int ctr=0; ctr<no_of_slots; ctr++)
+	for(int ctr = 0; ctr < no_of_slots; ctr++)
 	{
 		cout << "-------------------------------------------" << endl;
 		cout << "Slot : " << slots[ctr] << endl;
@@ -177,8 +186,7 @@ void show_all_slots()
 }
 
 
-
-// Main function..
+<div class="notes">// Main function..</div>
 int main(int argc, char **argv)
 {
 	loadHSMLibrary();
@@ -190,3 +198,5 @@ int main(int argc, char **argv)
 	freeResource();
 	return 0;
 }
+
+</pre></html>

@@ -6,7 +6,7 @@
 	<meta name="keywords" content="PKCS11, PKCS#11, PKCS #11, Hardware Security Modules, SoftHSM, HSM, PKCS11 tutorials">
 	<meta name="author" content="Cyber Hashira">
 </head>
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="css/style.css">
 
 <div style="position: absolute;top:5px;left:10px">
 	<a href="index.html"><img src="images/ch_logo.jpg" width="10%"></a>
@@ -34,28 +34,39 @@
 		<td>2. </td>
 		<td>Installing SoftHSM</td>
 		<td>SoftHSM is a free opensource simulator for HSM. In this video, I will show you how to install SoftHSM on Windows and Linux. I will be using SoftHSM throughout this tutorial.</td>
-		<td><a href="notes/pkcs11/Installing_Configuring_SoftHSM2.txt" target="_blank">Installing_Configuring_SoftHSM2.txt</a></td>
+		<td><a href="notes/pkcs11/SoftHSM2.html" target="_blank">Installing and Configuring SoftHSM2</a></td>
 		<td><a href="https://youtu.be/F-W1ymI7r04" target="_black"><img src="images/yt_logo.png" width="50"></a></td>
 	</tr>
     <tr>
 		<td>3. </td>
 		<td>Getting started with PKCS#11 API.</td>
 		<td>In this video, I will teach you the basics of PKCS#11 API.</td>
-		<td>Not Available</td>
+		<td>Not Required</td>
 		<td><a href="https://youtu.be/KrfRfQlE5k0" target="_black"><img src="images/yt_logo.png" width="50"></a></td>
 	</tr>
     <tr>
 		<td>4. </td>
 		<td>Writing PKCS#11 Code using C++</td>
 		<td>This video shows you how to write a C++ code using PKCS#11 API.</td>
-		<td><a href="" target="_blank">Work-in-Progress</a></td>
+		<td>C++ Sample codes for this session : <ul>
+			<li><a href="samples/pkcs11/connect_disconnect/connect_disconnect_linux.html" target="_blank">connect_disconnect_linux.cpp</a>
+			<li><a href="samples/pkcs11/connect_disconnect/connect_disconnect_windows.html" target="_blank">connect_disconnect_windows.cpp</a>
+			<li><a href="samples/pkcs11/connect_disconnect/all_platforms.html" target="_blank">all_platforms.cpp</a>
+			</ul>
+		</td>
 		<td><a href="https://youtu.be/HPPCpstc0wE" target="_black"><img src="images/yt_logo.png" width="50"></a></td>
 	</tr>
     <tr>
 		<td>5. </td>
 		<td>Slots and Tokens.</td>
 		<td>This video teaches you the concept of Slots and Tokens in PKCS#11.</td>
-		<td><a href="" target="_blank">Work-in-Progress</a></td>
+		<td>C++ Sample codes for this session : <ul>
+			<li><a href="samples/pkcs11/slots_and_tokens/get_slot_list.html" target="_blank">get_slot_list.cpp</a>
+			<li><a href="samples/pkcs11/slots_and_tokens/get_slot_list2.html" target="_blank">get_slot_list2.cpp</a>
+			<li><a href="samples/pkcs11/slots_and_tokens/get_slot_list3.html" target="_blank">get_slot_list3.cpp</a>
+			<li><a href="samples/pkcs11/slots_and_tokens/slot_and_token_info.html" target="_blank">slot_and_token_info.cpp</a>
+			</ul>
+		</td>
 		<td><a href="https://youtu.be/MehEx8Y1N6M" target="_black"><img src="images/yt_logo.png" width="50"></a></td>
 	</tr>
     <tr>
@@ -72,7 +83,46 @@
 		<td>Work-in-Progress</td>
 		<td><a href="https://youtu.be/EoAhhckTABk" target="_black"><img src="images/yt_logo.png" width="50"></a></td>
 	</tr>
+	<tr>
+		<td>8. </td>
+		<td>Generating Keys.</td>
+		<td>This video is about generating Keys/Keypair using PKCS #11 API.</td>
+		<td>C++ Sample codes for this session : <ul>
+			<li><a href="samples/pkcs11/object_management/generating_keys/createobject_data.html" target="_blank">createobject_data.cpp</a>
+			<li><a href="samples/pkcs11/object_management/generating_keys/generate_aes_key.html" target="_blank">generate_aes_key.cpp</a>
+			<li><a href="samples/pkcs11/object_management/generating_keys/generate_des3_key.html" target="_blank">generate_des3_key.cpp</a>
+			<li><a href="samples/pkcs11/object_management/generating_keys/generate_ecdsa_keypair.html" target="_blank">generate_ecdsa_keypair.cpp</a>
+			<li><a href="samples/pkcs11/object_management/generating_keys/generate_rsa_keypair.html" target="_blank">generate_rsa_keypair.cpp</a>
+			</ul>
+		</td>
+		<td><a href="https://youtu.be/vIMhj9pX9F4" target="_black"><img src="images/yt_logo.png" width="50"></a></td>
+	</tr>
+	<tr>
+		<td>9. </td>
+		<td>Random Number.</td>
+		<td>This video teaches you the concept of Random number. You also learn how to generate random numbers using PKCS#11.</td>
+		<td>C++ Sample codes for this session : <ul>
+			<li><a href="samples/pkcs11/crypto_operations/misc/C_GenerateRandom.html" target="_blank">C_GenerateRandom.cpp</a>
+			<li><a href="samples/pkcs11/crypto_operations/misc/C_SeedRandom.html" target="_blank">C_SeedRandom.cpp</a>
+			</ul>
+		</td>
+		<td><a href="https://youtu.be/yRrX-O37IOo" target="_black"><img src="images/yt_logo.png" width="50"></a></td>
+	</tr>
+	<tr>
+		<td>10. </td>
+		<td>Encryption</td>
+		<td>This video teaches you how to encrypt data using PKCS#11 API.</td>
+		<td>C++ Sample codes for this session : <ul>
+			<li><a href="samples/pkcs11/crypto_operations/encryption/CKM_DES3_ECB.html" target="_blank">CKM_DES3_ECB.cpp</a>
+			<li><a href="samples/pkcs11/crypto_operations/encryption/CKM_AES_CBC_PAD.html" target="_blank">CKM_AES_CBC_PAD.cpp</a>
+			<li><a href="samples/pkcs11/crypto_operations/encryption/CKM_RSA_PKCS.html" target="_blank">CKM_RSA_PKCS.cpp</a>
+			<li><a href="samples/pkcs11/crypto_operations/encryption/CKM_RSA_PKCS_OAEP.html" target="_blank">CKM_RSA_PKCS_OAEP.cpp</a>
+			</ul>
+		</td>
+		<td><a href="https://youtu.be/Iko5AgDw4h4" target="_black"><img src="images/yt_logo.png" width="50"></a></td>
+	</tr>
+
 </table>
 </body>
-<div style="position:absolute;top: 5px;right: 5px;font-size: 8pt;">** Last updated : Jan-29-2024 **</div>
+<div style="position:absolute;top: 5px;right: 5px;font-size: 8pt;">** Last updated : Feb-10-2024 **</div>
 </html>

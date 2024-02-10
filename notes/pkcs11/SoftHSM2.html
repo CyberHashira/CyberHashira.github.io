@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<head>
+    <title>Cyber Hashira | PKCS11 - Using SoftHSM.</title>
+    <meta charset="UTF-8">
+	<meta name="description" content="These are video tutorials that teaches you how to use jarsigner utility">
+	<meta name="keywords" content="jarsigner, signing jar files, keytool, jar files, java codesigning">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../css/style.css">
+
+<h1>SoftHSM</h1>
+
+<h2> - What is a softhsm ?</h2>
+<div class="notes">
+PKCS #11 API is meant for Hardware Security Modules. These are hardware devices that can be an appliance, a PCI/PCIe card, a USB device, USB token, or a Smart Card. These devices are required to be purchased if you want to use the PKCS#11 API. SoftHSM2 offers a free-to-use easy alternative to these devices. SoftHSM is a software-based implementation of a hardware security module. It supports PKCS#11 API and can be used to test PKCS #11-based applications.<br>
+<a href="https://www.opendnssec.org/softhsm/">https://www.opendnssec.org/softhsm/</a></div><br><br>
+
+
+<h2> - Installing SoftHSM2 on Windows</h2>
+<div class="notes">Download the installer for softhsm from the link below. Simply read and follow the steps by installation wizard.</div>
+<a href="https://github.com/disig/SoftHSM2-for-Windows/releases">https://github.com/disig/SoftHSM2-for-Windows/releases</a><br><br>
+
+<div class="notes">SoftHSM provides the functionality of a hardware security module but does not include utilities for cryptographic operations. For this tutorial, we will be using OpenSC utilities available at the link below.</div>
+<a href="https://github.com/OpenSC/OpenSC">https://github.com/OpenSC/OpenSC</a><br><br><br>
+
+
+<h2> - Installing SoftHSM2 on Linux</h2>
+<div class="notes">SoftHSM2 can be easily installed using package managers such as YUM (for RHEL), APT (for DEBIAN), and PACMAN (for ARCH). Simply search for SoftHSM2 and install the listed package. If, for some reason, you can't use any of these package managers, your alternative is to install SoftHSM2 from source.</div><br><br>
+
+<h3>Installing SoftHSM2 from source.</h3>
+<div class="notes">You may require to install GCC, OPENSSL-DEVEL, and OPENSC before building softhsm2.</div>
+<div class="notes">Download the source using the link below</div>
+<span class="cmds">wget https://dist.opendnssec.org/source/softhsm-2.6.1.tar.gz</span><br><br>
+
+<div class="notes">Extract the downloaded tarball.</div>
+<span class="cmds">tar xf softhsm-2.6.1.tar.gz</span><br><br>
+
+<div class="notes">Change to the extracted directory and configure the makefile</div>
+<span class="cmds">./configure --prefix=/opt/softhsm2</span><br><br>
+
+<div class="notes">Build softhsm source</div>
+<span class="cmds">make</span><br><br>
+
+<div class="notes">Install the softhsm binaries.</div>
+<span class="cmds">make install</span><br><br>
+
+
+<h2> - SoftHSM Commands</h2>
+
+<div class="notes"># Display version of Softhsm</div>
+<pre>softhsm2-util -v
+2.6.1</pre>
+<br><br>
+
+
+
+<div class="notes"># List available slots</div>
+<pre>softhsm2-util --show-slots
+Available slots:
+  Slot 0
+    Slot info:
+        Description:      SoftHSM slot ID 0x0
+        Manufacturer ID:  SoftHSM project
+        Hardware version: 2.6
+        Firmware version: 2.6
+        Token present:    yes
+    Token info:
+        Manufacturer ID:  SoftHSM project
+        Model:            SoftHSM v2
+        Hardware version: 2.6
+        Firmware version: 2.6
+        Serial number:
+        Initialized:      no
+        User PIN init.:   no
+        Label:
+</pre><br>
+
+
+<div class="notes"># Initialize a slot</div>
+<pre>softhsm2-util --init-token --slot 0 --label Token1
+=== SO PIN (4-255 characters) ===
+Please enter SO PIN: **********
+Please reenter SO PIN: **********
+=== User PIN (4-255 characters) ===
+Please enter user PIN: **********
+Please reenter user PIN: **********
+The token has been initialized and is reassigned to slot 525803377
+</pre><br><br>
+
+
+
+<h2> - OpenSC pkcs11-tool command</h2>
+
+<div class="notes"># Display information about softhsm2 library</div>
+<pre>
+pkcs11-tool --show-info --module /usr/local/softhsm2/lib/softhsm/libsofthsm2.so
+Cryptoki version 2.40
+Manufacturer     SoftHSM
+Library          Implementation of PKCS11 (ver 2.6)
+Using slot 0 with a present token (0x3f93e815)
+</pre><br>
+
+
+<div class="notes"># Get the list of all slots</div>
+<pre>
+pkcs11-tool --list-slots --module /usr/local/softhsm2/lib/softhsm/libsofthsm2.so
+Available slots:
+Slot 0 (0x3f93e815): SoftHSM slot ID 0x3f93e815
+  token label        : Token1
+  token manufacturer : SoftHSM project
+  token model        : SoftHSM v2
+  token flags        : login required, rng, token initialized, PIN initialized, other flags=0x20
+  hardware version   : 2.6
+  firmware version   : 2.6
+  serial num         : 5d061722bf93e815
+  pin min/max        : 4/255
+Slot 1 (0x1): SoftHSM slot ID 0x1
+  token state:   uninitialized
+</pre><br>
+</body></html>

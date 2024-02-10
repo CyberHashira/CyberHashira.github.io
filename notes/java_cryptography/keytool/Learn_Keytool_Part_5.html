@@ -8,25 +8,25 @@
 </head>
 <link rel="stylesheet" href="../../../css/style.css">
 
-<h1>Working with CA Signed certificates.</h1>
+<h1>Working with CA Signed certificates.</h1><br><br>
 
 
 <h3> - Generate a Private with a self-signed certificate for code signing</h3>
-<span class="cmds">keytool -genkey -alias code_signing -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -dname "CN=CodeSigning" -ext KU="digitalSignature" -ext EKU="codeSigning"</span><br>
+<span class="cmds">keytool -genkey -alias code_signing -keyalg RSA -keysize 2048 -sigalg sha256WithRSA -validity 730 -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -dname "CN=CodeSigning" -ext KU="digitalSignature" -ext EKU="codeSigning"</span><br><br>
 
 <h3> - List contents of my newly created keystore.</h3>
-<span class="cmds">keytool -list -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -v</span><br>
+<span class="cmds">keytool -list -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -v</span><br><br>
 
 
 <h3> - Generate a certificate request.</h3>
-<span class="cmds">keytool -certreq -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -alias code_signing -sigalg sha256WithRSA -file codesigning.csr</span><br>
+<span class="cmds">keytool -certreq -keystore myStore.p12 -storetype pkcs12 -storepass env:kpwd -alias code_signing -sigalg sha256WithRSA -file codesigning.csr</span><br><br>
 
 <h3> - Bring the generated CSR onto the machine with an OpenSSL CA</h3>
-<span class="cmds">scp hashi@akaza:keyStores/code_signing.csr .</span><br>
+<span class="cmds">scp hashi@akaza:keyStores/code_signing.csr .</span><br><br>
 
 
 <h3> - Sign the CSR using OpenSSL CA.</h3>
-<span class="cmds">openssl ca -config myCA/myIssuing/myIssuing.cnf -extensions code_signing -days 730 -notext -md sha256 -in code_signing.csr -out code_signing.cer</span>
+<span class="cmds">openssl ca -config myCA/myIssuing/myIssuing.cnf -extensions code_signing -days 730 -notext -md sha256 -in code_signing.csr -out code_signing.cer</span><br><br>
 
 <h3> - Pass the signed certificate to the machine that has the keystore.</h3>
 <span class="cmds">scp code_signing.cer hashi@akaza:keyStores/</span><br><br>
