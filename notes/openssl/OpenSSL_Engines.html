@@ -1,133 +1,188 @@
 <!DOCTYPE html>
+<head>
+	<title>CyberHashira | OpenSSL | Engines.</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="This video tutorial series teaches you how to use the OpenSSL utility. OpenSSL is a highly popular cryptographic tool. My goal is to cover every feature of OpenSSL eventually. Whether you're a beginner or an advanced user, I'm sure there will be something for you.">
+	<meta name="keywords" content="OpenSSL, OpenSSL Tutorials, Generating Keys using OpenSSL, Generating Certificates using OpenSSL, OpenSSL CA, Encryption using OpenSSL, Signing Using OpenSSL.">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../css/style.css">
 
-<html>
-        <head>
-                <title>CyberHashira | OpenSSL > Notes > OpenSSL_Engines </title>
-        </head>
+<h1>Using Engines in OpenSSL</h1>
+<br><br>
+<div class="notes">OpenSSL Engines serve to expand the capabilities of OpenSSL. For instance, the pkcs11 engine extends OpenSSL's functionality to hardware tokens, providing a valuable means to enhance compatibility, performance, and security. These engines are particularly useful when seeking to leverage specialized cryptographic resources or integrate with external systems, thereby optimizing OpenSSL for various cryptographic environments.
+        In this video, I'll be using Luna Cloud HSM to demonstrate how engines work. Feel free to use use any other HSM or even softhsm2 to test OpenSSL engine.</div><br>
+<hr><br>
+<h3> - Installing PKCS11 Engine for OpenSSL</h3>
+<div class="notes"> # Install pre-requisites</div>
+<span class="cmds">hashi@rengoku:~$ sudo apt install libssl-dev pkgconf</span><br><br>
 
+<div class="notes"> Download libP11 tarball.</div>
+<span class="cmds">hashi@rengoku:~/Dojo$ wget https://github.com/OpenSC/libp11/releases/download/libp11-0.4.12/libp11-0.4.12.tar.gz</span><br><br>
+
+<div class="notes"> # Extract the downloaded tarball.</div>
+<span class="cmds">hashi@rengoku:~/Dojo$ tar xf libp11-0.4.12.tar.gz</span><br>
+<span class="cmds">hashi@rengoku:~/Dojo$ cd libp11-0.4.12/</span><br><br>
+
+<div class="notes"> # Configure makefile for building pkcs11-engine.</div>
+<span class="cmds">hashi@rengoku:~/Dojo/libp11-0.4.12$ ./configure</span><br><br>
+
+<div class="notes"> # Start building binaries using make.</div>
+<span class="cmds">hashi@rengoku:~/Dojo/libp11-0.4.12$ make</span><br><br>
+
+<div class="notes"> # Install libp11 binary.</div>
+<span class="cmds">hashi@rengoku:~/Dojo/libp11-0.4.12$ sudo make install</span><br><br>
+
+<div class="notes"> # Check if libp11 engine is accessible</div>
 <pre>
+        hashi@rengoku:~/Dojo$ openssl engine pkcs11 -v
+        (pkcs11) pkcs11 engine
+        SO_PATH, MODULE_PATH, PIN, VERBOSE, QUIET, INIT_ARGS, FORCE_LOGIN,
+        RE_ENUMERATE
+</pre><br>
 
-OpenSSL Engines
------------------
+<div class="notes"> # Additional tools required for the next step</div>
+<span class="cmds">sudo apt install opensc gnutls-bin</span><br><br>
+<hr><br>
+<h3> - Using PKCS11 Engine.</h3>
 
-> Install pre-requisites
-hashi@rengoku:~$ sudo apt install libssl-dev pkgconf
-
-> Download tarball for libp11
-hashi@rengoku:~/Dojo$ wget https://github.com/OpenSC/libp11/releases/download/libp11-0.4.12/libp11-0.4.12.tar.gz
-
-> Extract tarball
-hashi@rengoku:~/Dojo$ tar xf libp11-0.4.12.tar.gz
-hashi@rengoku:~/Dojo$ cd libp11-0.4.12/
-
-> Configure makefile
-hashi@rengoku:~/Dojo/libp11-0.4.12$ ./configure
-
-> Start building libp11 binary
-hashi@rengoku:~/Dojo/libp11-0.4.12$ make
-
-> Install libp11 binary
-hashi@rengoku:~/Dojo/libp11-0.4.12$ sudo make install
-
-> Check if libp11 engine is accessible
-hashi@rengoku:~/Dojo$ openssl engine pkcs11 -v
-(pkcs11) pkcs11 engine
-     SO_PATH, MODULE_PATH, PIN, VERBOSE, QUIET, INIT_ARGS, FORCE_LOGIN,
-     RE_ENUMERATE
-
-
-> Additional tools
-sudo apt install opensc gnutls-bin
-
-
-
-hashi@rengoku:~/Dojo$ p11tool --list-all --provider /usr/local/dpod/libs/64/libCryptoki2.so --login
-Token 'SamPaul_FIPS' with URL 'pkcs11:model=Cryptovisor7;manufacturer=SafeNet;serial=1285217930537;token=SamPaul_FIPS' requires user PIN
-Enter PIN:
-Object 0:
+<div class="notes"> # Following command displays a list of all objects available in a token. </div>
+<pre>
+        hashi@rengoku:~/Dojo$ p11tool --list-all --provider /usr/local/dpod/libs/64/libCryptoki2.so --login
+        Token 'SamPaul_FIPS' with URL 'pkcs11:model=Cryptovisor7;manufacturer=SafeNet;serial=1285217930537;token=SamPaul_FIPS' requires user PIN
+        Enter PIN:
+        
+        Object 0:
         URL: pkcs11:model=Cryptovisor7;manufacturer=SafeNet;serial=1285217930537;token=SamPaul_FIPS;object=rsa-pri;type=private
         Type: Private key (RSA-2048)
         Label: rsa-pri
         Flags: CKA_PRIVATE; CKA_NEVER_EXTRACTABLE; CKA_SENSITIVE;
         ID:
-
-Object 1:
+        
+        Object 1:
         URL: pkcs11:model=Cryptovisor7;manufacturer=SafeNet;serial=1285217930537;token=SamPaul_FIPS;object=rsa-pub;type=public
         Type: Public key (RSA-2048)
         Label: rsa-pub
         Flags: CKA_PRIVATE;
         ID:
+</pre><br>
+
+<div class="notes"> # Use private key available in the Cloud HSM to sign a text file.</div>
+<span class="cmds">OPENSSL_CONF=engine.conf openssl dgst -engine pkcs11 -keyform engine -sign "pkcs11:model=Cryptovisor7;manufacturer=SafeNet;serial=1285217930537;token=SamPaul_FIPS;object=rsa-pri;type=private" -sha256 -out jack_and_jill.txt.sig jack_and_jill.txt</span><br><br>
+
+<div class="notes"> # Use public key available in the Cloud HSM to verify signature of a text file.</div>
+<span class="cmds">OPENSSL_CONF=engine.conf openssl dgst -engine pkcs11 -keyform engine -verify "pkcs11:model=Cryptovisor7;manufacturer=SafeNet;serial=1285217930537;token=SamPaul_FIPS;object=rsa-pub;type=private" -sha256 -signature jack_and_jill.txt.sig jack_and_jill.txt</span><br><br>
+<hr><br>
 
 
+<h3> - Configuring SoftHSM </h3>
+<div class="notes">Most of you folks may not have access to a hardware token or HSM. An alternative is to use a free HSM simulator known as SoftHSM2. Steps below shows how to initialize a softhsm token, so you could use it with pkcs11-engine.</div>
+<br><br>
 
+<div class="notes"> # List all available slots.</div>
+<pre>
+  hashi@rengoku:~$ softhsm2-util --show-slots
+  Available slots:
+  Slot 0
+      Slot info:
+          Description:      SoftHSM slot ID 0x0                                             
+          Manufacturer ID:  SoftHSM project                 
+          Hardware version: 2.6
+          Firmware version: 2.6
+          Token present:    yes
+      Token info:
+          Manufacturer ID:  SoftHSM project                 
+          Model:            SoftHSM v2      
+          Hardware version: 2.6
+          Firmware version: 2.6
+          Serial number:                    
+          Initialized:      no
+          User PIN init.:   no
+          Label:              
+</pre><br>
 
+<div class="notes"> # Initialize a free slot.</div>
+<pre>
+  hashi@rengoku:~$ softhsm2-util --init-token --label Token01 --free
+  Slot 0 has a free/uninitialized token.
+  === SO PIN (4-255 characters) ===
+  Please enter SO PIN: ***************
+  Please reenter SO PIN: ***************
+  === User PIN (4-255 characters) ===
+  Please enter user PIN: **********
+  Please reenter user PIN: **********
+  The token has been initialized and is reassigned to slot 365355471
+<pre><br>
 
-OPENSSL_CONF=engine.conf openssl dgst -engine pkcs11 -keyform engine -sign "pkcs11:model=Cryptovisor7;manufacturer=SafeNet;serial=1285217930537;token=SamPaul_FIPS;object=rsa-pri;type=private" -sha256 -out jack_and_jill.txt.sig jack_and_jill.txt
+<div class="notes"># List all available slots.</div>
+<pre>
+  hashi@rengoku:~$ softhsm2-util --show-slots
+  Available slots:
+  Slot 365355471
+      Slot info:
+          Description:      SoftHSM slot ID 0x15c6e1cf                                      
+          Manufacturer ID:  SoftHSM project                 
+          Hardware version: 2.6
+          Firmware version: 2.6
+          Token present:    yes
+      Token info:
+          Manufacturer ID:  SoftHSM project                 
+          Model:            SoftHSM v2      
+          Hardware version: 2.6
+          Firmware version: 2.6
+          Serial number:    e66cd13f95c6e1cf
+          Initialized:      yes
+          User PIN init.:   yes
+          Label:            Token01                         
+  Slot 1
+      Slot info:
+          Description:      SoftHSM slot ID 0x1                                             
+          Manufacturer ID:  SoftHSM project                 
+          Hardware version: 2.6
+          Firmware version: 2.6
+          Token present:    yes
+      Token info:
+          Manufacturer ID:  SoftHSM project                 
+          Model:            SoftHSM v2      
+          Hardware version: 2.6
+          Firmware version: 2.6
+          Serial number:                    
+          Initialized:      no
+          User PIN init.:   no
+          Label:                      
+</pre><br>
 
+<div class="notes"> # Use pkcs11-tool to generate a keypair.</div>
+<pre>
+  hashi@rengoku:~$ pkcs11-tool --module /opt/softhsm2/lib/softhsm/libsofthsm2.so --login --keypairgen --key-type rsa:2048 --label "signing_key" --usage-sign
+  Using slot 0 with a present token (0x15c6e1cf)
+  Logging in to "Token01".
+  Please enter User PIN: 
+  Key pair generated:
+  Private Key Object; RSA 
+    label:      signing_key
+    Usage:      decrypt, sign, unwrap
+    Access:     sensitive, always sensitive, never extractable, local
+  Public Key Object; RSA 2048 bits
+    label:      signing_key
+    Usage:      encrypt, verify, wrap
+    Access:     local
+</pre>
 
-OPENSSL_CONF=engine.conf openssl dgst -engine pkcs11 -keyform engine -verify "pkcs11:model=Cryptovisor7;manufacturer=SafeNet;serial=1285217930537;token=SamPaul_FIPS;object=rsa-pub;type=private" -sha256 -signature jack_and_jill.txt.sig jack_and_jill.txt
-
-
-
-
-
-
-hashi@rengoku:~/Dojo$ openssl engine gem
-(gem) Gem engine support
-
-
-hashi@rengoku:~/Dojo$ cmu list
-Certificate Management Utility (64-bit) v10.5.0-470. Copyright (c) 2022 SafeNet. All rights reserved.
-
-Please enter password for token in slot 0 : *********
-
-ouid=c16b000023000001e3990800   label=rsa-pri
-ouid=c06b000023000001e3990800   label=rsa-pub
-
-
-
-
-hashi@rengoku:~/Dojo$ openssl genrsa -engine gem -out rsa.pri
-HSM Label is "SamPaul_FIPS".
-Enter Crypto-Officer Password: ***************************************************************************************************************************************************************************************************************************************************************
-engine "gem" set.
-Generating RSA private key, 2048 bit long modulus (2 primes)
-e is 65537 (0x010001)
-
-
-
-
-
-hashi@rengoku:~/Dojo$ cmu list -password userpinco
-Certificate Management Utility (64-bit) v10.5.0-470. Copyright (c) 2022 SafeNet. All rights reserved.
-
-ouid=196c000023000001e3990800   label=rsa-private-de143e5ad24f8885e66445176b055f507c59c963
-ouid=186c000023000001e3990800   label=rsa-public-de143e5ad24f8885e66445176b055f507c59c963
-ouid=c16b000023000001e3990800   label=rsa-pri
-ouid=c06b000023000001e3990800   label=rsa-pub
-
-
-
-
-hashi@rengoku:~/Dojo$ xxd -p jack_and_jill.txt.sig
-0a154b9f9666041983d86bf8597a13d116286a2296c93de881ff6474cb5d
-8c4e4deb7caa9acb75f20fae0719da24d2aa308ba701b6f62d0202f2951a
-84895e9f1add0ea4959535031348a507694b11e34756417f3a32fac2dd2a
-d5248a977c7adc2bb356d69aa33d3e9111304988eeda74364dd787fcad42
-d745a0e443d620693221370db505f2804b4dc5b9dc863cb2fbfdb17aa464
-611441ca8ca053d8ea8b7e0d14b8353c75d47981cf77ebd45f19f90cb3f4
-78c92d829a748a294a7ca23d765f574fdc780376e12a4f5c53fb70fde054
-3961f042c4762094b529089655acd6cdff71db720f08c613ab774dcca236
-eb4b1f661347a510bf29145b6f78851d
-
-
-hashi@rengoku:~/Dojo$ openssl dgst -engine gem -keyform engine -verify rsa-public-de143e5ad24f8885e66445176b055f507c59c963 -signature jack_and_jill.txt.sig jack_and_jill.txt
-HSM Label is "SamPaul_FIPS".
-Enter Crypto-Officer Password: ***************************************************************************************************************************************************************************************************************************************************************
-engine "gem" set.
-Verified OK
-
-
-
+<div class="notes"> # Display the list of all objects.</div>
+<pre>
+  hashi@rengoku:~$ pkcs11-tool --module /opt/softhsm2/lib/softhsm/libsofthsm2.so --login --keypairgen --key-type rsa:2048 --label "signing_key" --usage-sign
+  Using slot 0 with a present token (0x15c6e1cf)
+  Logging in to "Token01".
+  Please enter User PIN: 
+  Key pair generated:
+  Private Key Object; RSA 
+    label:      signing_key
+    Usage:      decrypt, sign, unwrap
+    Access:     sensitive, always sensitive, never extractable, local
+  Public Key Object; RSA 2048 bits
+    label:      signing_key
+    Usage:      encrypt, verify, wrap
+    Access:     local
 </pre>
 </html>

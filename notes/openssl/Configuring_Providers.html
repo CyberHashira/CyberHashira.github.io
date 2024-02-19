@@ -1,66 +1,49 @@
 <!DOCTYPE html>
+<head>
+	<title>CyberHashira | Configuring Providers in OpenSSL 3.x</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="This video tutorial series teaches you how to use the OpenSSL utility. OpenSSL is a highly popular cryptographic tool. My goal is to cover every feature of OpenSSL eventually. Whether you're a beginner or an advanced user, I'm sure there will be something for you.">
+	<meta name="keywords" content="OpenSSL, OpenSSL Tutorials, Generating Keys using OpenSSL, Generating Certificates using OpenSSL, OpenSSL CA, Encryption using OpenSSL, Signing Using OpenSSL.">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../css/style.css">
 
-<html>
-        <head>
-                <title>CyberHashira | OpenSSL > Notes > Configuring_Providers </title>
-        </head>
-
-<pre>
-
-Notes for OpenSSL Video #13 | Configuring Providers
-====================================================
-
-
->> Instructions on how to build OpenSSL 3.x from source | WINDOWS
--------------------------------------------------------------------
-
-NOTE :- These instructions are for building 64 bit binaries. Process to build binaries for other architecture may be a bit different.
+<h1>Configuring Providers for OpenSSL 3.x</h1>
+<br>
 
 
-# Download and Install MSYS2 from https://www.msys2.org/. This program has everything required to build OpenSSL from source.
+<h3> - Building OpenSSL 3.x from source on Windows</h2>
+<div class="notes">
+<ol>
+<li> Download and Install MSYS2 from https://www.msys2.org/. This program has everything required to build OpenSSL from source.
+<li> Download and Copy openssl tarball into C:\msys64\home\%YOUR_USER_NAME%
+<li> Launch "MSYS2 MINGW64" from Start Menu.
+<li> Install mingw build tools using the command "pacman -S mingw-w64-x86_64-gcc make"
+<li> Untar openssl tarball "tar xf openssl-3.x.x.tar.gz"
+<li> Get into the extracted OpenSSL directory and configure the makefile using the command -> "./Configure mingw64 --prefix=C:/OpenSSL --openssldir=C:/OpenSSL enable-fips"
+<li> Execute "make".
+<li> Execute "make install".   #SEE NOTES BELOW FOR OTHER MAKE INSTALL OPTIONS.
+</ol>
+</div><br><br><hr>
 
-# Download and Copy openssl tarball into C:\msys64\home\%YOUR_USER_NAME%
+<h3> - Build OpenSSL 3.x from source | Unix/Linux </h3>
+<div class="notes">
+<ol>
+	<li> Be sure to check that your system has gcc, make, and perl available.
+	<li> Download OpenSSL tarball from openssl.org.
+	<li> Extract tarball using "tar xf openssl_tar_ball_name"
+	<li> Change to the extracted OpenSSL directory and configure the make file as follows.
+	<li> ./config --prefix=/opt/openssl --openssldir=/opt/openssl enable-fips    ## you can choose your own prefered location.
+	<li> Start the build process by executing "make".
+	<li> Install the built binaries using "make install"   #SEE NOTES BELOW FOR OTHER MAKE INSTALL OPTIONS.
+</ol>
+</div><br><br>
+<hr>
 
-# Launch "MSYS2 MINGW64" from Start Menu.
+<h3>MAKE OPTIONS</h3>
 
-# Install mingw build tools using the command "pacman -S mingw-w64-x86_64-gcc make"
-
-# Untar openssl tarball "tar xf openssl-3.x.x.tar.gz"
-
-# Get into the extracted OpenSSL directory and configure the makefile using the command -> "./Configure mingw64 --prefix=C:/OpenSSL --openssldir=C:/OpenSSL enable-fips"
-
-# execute "make".
-
-# execute "make install".   #SEE NOTES BELOW FOR OTHER MAKE INSTALL OPTIONS.
-
-
-
-
-
->> Instructions on how to build OpenSSL 3.x from source | Unix/Linux
-----------------------------------------------------------------------
-
-# Be sure your system already has gcc, make, and perl installed.
-
-# Download OpenSSL tarball from openssl.org.
-
-# Extract tarball using "tar xf openssl_tar_ball_name"
-
-# Get into the extracted OpenSSL directory and configure the make file as follows.
-./config --prefix=/opt/openssl --openssldir=/opt/openssl enable-fips    ## you can choose your own prefered location.
-
-# Start the build process by executing "make"
-
-# Install the built binaries using "make install"   #SEE NOTES BELOW FOR OTHER MAKE INSTALL OPTIONS.
-
-
-
-
-
-MAKE OPTIONS
--------------
-
-#INSTALL OPTIONS : -
+<div class="notes"><pre>
+<u>INSTALL OPTIONS</u><br>
 make install  ................  :  Installs everything.
 make install_sw  .............  :  Installs the executables, libraries and header files.
 make install_fips  ...........  :  Installs the fips module and configuration file.
@@ -73,9 +56,10 @@ make install_modules  ........  :  Installs only libraries.
 make install_runtime  ........  :  Installs openssl program, libcrypto and libssl library.
 make install_runtime_libs  ...  :  Installs libcrypto and libssl.
 make install_programs  .......  :  Installs openssl program, libcrypto and libssl library.
+</pre></div><br><br>
 
-
-#UNINSTALL OPTIONS : -
+<div class="notes"><pre>
+<u>UNINSTALL OPTIONS</u><br>
 make uninstall  ..............  :  Removes everything.
 make uninstall_sw  ...........  :  Removes executables, libraries and header files.
 make uninstall_docs  .........  :  Removes all documentation.
@@ -83,25 +67,22 @@ make uninstall_dev  ..........  :  Removes all development files.
 make uninstall_fips  .........  :  Removes fips module.
 make uninstall_engine  .......  :  Removes engine libraries.
 make uninstall_programs  .....  :  Removes the executable and libraries.
+</pre></div><br><br>
+<hr>
 
+<h3>Steps to configure Providers in OpenSSL.</h3>
 
+<div class="notes"> - Displays the list of all available providers.</div>
+<span class="cmds">openssl list -providers</span><br><br>
 
+<div class="notes"> - Check for the OPENSSLDIR path.</div>
+<span class="cmds">openssl version -a</span><br><br>
 
+<div class="notes"> - Go to your OPENSSLDIR path and edit openssl.cnf.</div><br>
 
->> Configuring Providers in OpenSSL 
-------------------------------------
+<div class="notes"> - Search for [provider_sect] and add entry for the provider you want to use under it</div>
 
-# Displays the list of all available providers.
-openssl list -providers
-
-
-# Check the path configured for OpenSSL using 'openssl version -a'.
-
-
-# Go to your OPENSSLDIR path and edit openssl.cnf
-
-
-# Search for [provider_sect] and add entry for the provider you want to use under it.
+<div class="notes"><pre>
 
 	-> For LEGACY PROVIDER : 
 		legacy = legacy_sect
@@ -118,8 +99,11 @@ openssl list -providers
 	-> For FIPS PROVIDER :
 		fips = fips_sect
 
+	</pre></div>
 
-# Write a new section for your provider as follows.
+<div class="notes"> - Write a new section for your chosen provider as follows.</div>
+
+<div class="notes"><pre>
 
 	-> For LEGACY PROVIDER : 
 		[legacy_sect]
@@ -137,20 +121,22 @@ openssl list -providers
 		[null_sect]
 		activate = 1
 
+</pre></div>
 
+<div class="notes"> - Execute 'openssl list -provider' to check if the provide you configured is displayed.</div>
+<br><br>
+<hr><br>
 
+<h3>Configuring FIPS Provider</h3>
 
->> Configuring FIPS Provider 
------------------------------
+<div class="notes"> # These notes assume that OPENSSLDIR is at '/opt/openssl', i.e. That's the location where openssl is installed.</div><br>
 
-'/opt/openssl' is the location where openssl is installed.
+<div class="notes"> - Generate and write FIPS module configuration</div>
+<span class="cmds">openssl fipsinstall -out /opt/openssl/fipsmodule.cnf -module /opt/openssl/lib64/ossl-module/fips.so</span><br><br>
 
-# Generate and write FIPS module configuration
-openssl fipsinstall -out /opt/openssl/fipsmodule.cnf -module /opt/openssl/lib64/ossl-module/fips.so
+<div class="notes"> - Edit /opt/openssl/openssl.cnf to write the following entries.</div>
 
-
-# Edit /opt/openssl/openssl.cnf to write the following entries.
-
+<pre>
 	> Uncomment the line '.include fipsmodule.cnf'.
 
 	> Add the location of fips configuration file as ".include /opt/openssl/fipsmodule.cnf"
@@ -167,6 +153,6 @@ openssl fipsinstall -out /opt/openssl/fipsmodule.cnf -module /opt/openssl/lib64/
 	> Write a new section for FIPS module.
 		[fips_sect]
 		activate = 1
-
 </pre>
+<div class="notes"> - Execute 'openssl list -providers' to check if the FIPS provider is listed.</div>
 </html>

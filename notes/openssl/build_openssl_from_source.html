@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<head>
+	<title>CyberHashira | Building OpenSSL from Source</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="This video tutorial series teaches you how to use the OpenSSL utility. OpenSSL is a highly popular cryptographic tool. My goal is to cover every feature of OpenSSL eventually. Whether you're a beginner or an advanced user, I'm sure there will be something for you.">
+	<meta name="keywords" content="OpenSSL, OpenSSL Tutorials, Generating Keys using OpenSSL, Generating Certificates using OpenSSL, OpenSSL CA, Encryption using OpenSSL, Signing Using OpenSSL.">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../css/style.css">
+
+<h1>Building OpenSSL from Source.</h1>
+<br>
+<h2>Build OpenSSL from Source on Windows</h2>
+
+<h3> - Prerequisites</h3>
+<div class="notes">
+  <ul>
+    <li>Visual Studio (any version will do, latest if possible)
+    <li>Strawberry Perl https://strawberryperl.com
+    <li>Nasm (Netwide Assembler) https://www.nasm.us
+    <li>Windows OS
+  </ul>
+</div>
+
+<h3> - Follow these steps</h3>
+<div class="notes">
+<ol>
+  <li> Download the source tar ball for OpenSSL from www.openssl.org
+  <li> Make a new folder at any convenient location and extract the contents of the downloaded tar ball into that folder.
+  <li> Launch Visual Studio Developer Command Prompt and go to the folder where the contents of extracted tarball exists.
+  <li> Configure Makefile using "perl configure VC-WIN64A --openssldir=C:\OpenSSL --prefix=C:\OpenSSL"
+  <li> Start the building process by executing "nmake".
+  <li> Install the binaries using the command "nmake install".
+  <li> Once finished, add location of openssl.exe into path environment variable.
+</ol>
+</div>
+<br>
+<hr>
+<br>
+
+<h2>Building OpenSSL from source on Linux</h2>
+
+<h3> - Prerequisites</h3>
+<ul>
+  <li> GCC compiler.
+  <li> Perl.
+  </ul>
+<h3> - Follow these steps</h3>
+<div class="notes">
+<ol>
+
+<li> Download the source tar ball for OpenSSL from www.openssl.org.
+<li> Create a new directory anywhere on linux and extract the contents of tarball into that directory.
+<li> Execute ./configure to generate the Makefile.
+<li> Execute "make" to start the build process. Optionally execute "make -j" if you want to build OpenSSL binaries faster.
+<li> Execute "make install" to install the binaries.
+</ol>
+</div><br><hr>
+
+<h3>A newer revision of this document is available at : - <a href="configuring_providers.html" target="_blank">Configuring Providers</a></h3><br><br>
+</html>

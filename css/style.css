@@ -41,6 +41,10 @@ h3 {
     color:whitesmoke;
 }
 
+hr {
+    color: orange;
+}
+
 .logo {
     text-align: center;
     font-size: 32pt; 

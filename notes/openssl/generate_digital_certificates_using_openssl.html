@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<head>
+	<title>CyberHashira | OpenSSL | Generating Digital Certificates.</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="This video tutorial series teaches you how to use the OpenSSL utility. OpenSSL is a highly popular cryptographic tool. My goal is to cover every feature of OpenSSL eventually. Whether you're a beginner or an advanced user, I'm sure there will be something for you.">
+	<meta name="keywords" content="OpenSSL, OpenSSL Tutorials, Generating Keys using OpenSSL, Generating Certificates using OpenSSL, OpenSSL CA, Encryption using OpenSSL, Signing Using OpenSSL.">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../css/style.css">
+
+<h1>Generating Digital Certificates using OpenSSL</h1><br>
+
+
+<h3> - Generating a self-signed certificate </h3>
+
+<div class="notes">Generate a private key.</div>
+<span class="cmds">openssl genrsa | openssl pkcs8 -topk8 -nocrypt -out rsa.pri</span><br><br>
+
+<div class="notes">Generate self signed certificate.</div>
+<span class="cmds">openssl req -x509 -key rsa.pri -sha256 -days 365 -out test.cer</span><br><br>
+
+<div class="notes">Viewing a certificate.</div>
+<span class="cmds">openssl x509 -in test.cer -noout -text</span><br><br>
+
+<div class="notes">Generating RSA private key and certificate all in one go.</div>
+<span class="cmds">openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 365 -out test.cer</span><br><br>
+<hr><br>
+
+
+<h3> - Generating ECDSA private key and a certificate in one go.</h3>
+
+<div class="notes">Generate ECDSA private key.</div>
+<span class="cmds">openssl ecparam -name secp384r1 -noout -genkey -out ec.pri</span><br><br>
+
+<div class="notes">Generate self-signed certificate.</div>
+<span class="cmds">openssl req -x509 -key ec.pri -days 365 -sha256 -subj '/CN=Test' -out test.cer</span><br><br>
+
+<div class="notes">View certificate.</div>
+<span class="cmds">openssl x509 -in test.cer -noout -text</span><br><br>
+<hr><br>
+
+
+<h3> - Adding subject to a certificate.</h3>
+<span class="cmds">openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 365 -out test.cer -subj '/CN=Test'</span><br><br>
+<span class="cmds">openssl req -x509 -newkey rsa:2048 -keyout rsa.pri -sha256 -nodes -days 365 -out test.cer -subj '/CN=Test/O=Acme Inc./OU=Cyber Security/C=IN'</span><br><br>
+<span class="cmds">openssl req -x509 -newkey rsa:2048 -keyout rsa.pri -sha256 -nodes -days 365 -out test.cer -subj '/CN=Test/O=Acme Inc./OU=Cyber Security/C=IN/emailAddress=pki@acme-inc.com'</span><br><br>
+<hr><br>
+
+<div class="notes">https://www.openssl.org/docs/man3.0/man5/x509v3_config.html</div>
+<h3> - Adding Certificate Extensions.</h3><br>
+
+<div class="notes">Basic Constraints.</div>
+<span class="cmds">openssl req -x509 -newkey rsa:2048 -keyout rsa.pri -sha256 -nodes -days 365 -out test.cer -subj '/CN=Test/O=Acme Inc./OU=Cyber Security/C=IN/ST=UP/emailAddress=pki@acme-inc.com' -addext "basicConstraints=critical, CA:false, pathlen:1" </span><br><br>
+
+<div class="notes">Subject Alternate names.</div> 
+<span class="cmds">openssl req -x509 -newkey rsa:2048 -keyout rsa.pri -sha256 -nodes -days 365 -out test.cer -subj '/CN=Test/O=Acme Inc./OU=Cyber Security/C=IN/ST=UP/emailAddress=pki@acme-inc.com' -addext "basicConstraints=critical, CA:false" -addext "subjectAltName = DNS:acme-inc.com,IP:127.0.0.1"</span><br><br>
+
+<div class="notes">Key Usages.</div>
+<span class="cmds">openssl req -x509 -newkey rsa:2048 -keyout rsa.pri -sha256 -nodes -days 365 -out test.cer -subj '/CN=Test/O=Acme Inc./OU=Cyber Security/C=IN/ST=UP/emailAddress=pki@acme-inc.com' -addext "keyUsage = critical,digitalSignature,keyEncipherment,keyAgreement,cRLSign"</span><br><br>
+
+<div class="notes">Extended KeyUsage.</div>
+<span class="cmds">openssl req -x509 -newkey rsa:2048 -keyout rsa.pri -sha256 -nodes -days 365 -out test.cer -subj '/CN=Test/O=Acme Inc./OU=Cyber Security/C=IN/ST=UP/emailAddress=pki@acme-inc.com' -addext "extendedKeyUsage = codeSigning, serverAuth, clientAuth"</span><br><br>
+<hr><br>
+
+
+<h3> - Using configuration files for generating certificates.</h3>
+
+<div class="notes">Sample configuration file.</div>
+
+<pre>
+	[req]
+	distinguished_name = dname
+	x509_extensions = cert_ext
+	prompt = no
+
+	# DNAME RELATED INFORMATION.
+	[ dname ]
+	commonName = cyberhashira.com
+	countryName = XY
+	stateOrProvinceName = Some State
+	localityName = Some City
+	organizationName = Cyber Hashira
+	organizationalUnitName = Cyber Security
+	emailAddress = pki@cyberhashira.com
+
+	# CERTIFICATE EXTENSIONS
+	[ cert_ext ]
+	basicConstraints = CA:FALSE
+	keyUsage = digitalSignature, nonRepudiation
+	extendedKeyUsage = codeSigning
+	crlDistributionPoints=URI:http://myCA/ca.crl
+	subjectAltName = @sans
+	subjectKeyIdentifier=hash
+	authorityKeyIdentifier=keyid,issuer
+	authorityInfoAccess = OCSP;URI:http://ocsp.myCA/
+	authorityInfoAccess = caIssuers;URI:http://myCA/ca.cer
+	certificatePolicies= 1.2.4.5.6.7
+
+	# SUBJECT ALTERNATE NAME.
+	[sans]
+	IP.1 = 127.0.0.1
+	DNS.1 = blog.cyberhashira.com
+	DNS.2 = video.cyberhashira.com
+</pre>
+
+<div class="notes">This command would use a configuration file to read detailed information about a certificate you want to generate.</div>
+<span class="cmds">openssl req -x509 -config my.cnf -nodes -keyout rsa.pri -out test.cer</span><br><br>
+<hr><br>
+
+
+<h3> - Generating Signed certificates.</h3>
+
+<div class="notes"> >> To generate a signed certificate, we need a certificate authority that will sign a certificate request. So our first step would be to generate CA keys and certificates. For that we'll use a configuration file containing information about the CA as follows - </div>
+
+<pre>
+	[req]
+	distinguished_name = dname
+	x509_extensions = cert_ext
+	prompt = no
+
+	[ dname ]
+	CN = RootCA
+	C = XY
+	ST = Some State
+	L = Some City
+	O = Cyber Hashira
+	OU = Cyber Security
+	emailAddress = pki@cyberhashira.com
+
+	[ cert_ext ]
+	basicConstraints = CA:TRUE, pathlen:0
+	keyUsage = keyCertSign, cRLSign
+	subjectKeyIdentifier=hash
+</pre>
+
+<div class="notes"> >> We'll now use this configuration file to setup a Root CA.</div>
+<span class="cmds">openssl req -x509 -config root.cnf -nodes -keyout root.pri -out root.cer</span><br><br>
+
+
+<div class="notes"> >> Now we'll use our CA keys to sign a certificate request. For this example, we'll sign a webserver certificate and use the following configuration file.</div>
+
+<pre>
+	[req]
+	distinguished_name = dname
+	req_extensions = req_ext
+	prompt = no
+
+	[ dname ]
+	CN = CyberHashira.com
+	C = XY
+	ST = Some State
+	L = Some City
+	O = Cyber Hashira
+	OU = Cyber Security
+	emailAddress = pki@cyberhashira.com
+
+	[ req_ext ]
+	basicConstraints = CA:FALSE
+	keyUsage = digitalSignature, nonRepudiation
+	extendedKeyUsage = serverAuth, clientAuth
+	subjectKeyIdentifier=hash
+	subjectAltName = @sans
+	certificatePolicies= 1.2.4.5.6.7
+	authorityInfoAccess = OCSP;URI:http://ocsp.myCA/
+	authorityInfoAccess = caIssuers;URI:http://myCA/ca.cer
+
+	[sans]
+	DNS.1 = blog.cyberhashira.com
+	DNS.2 = video.cyberhashira.com
+</pre><br>
+
+<div class="notes">We'll first generate a certificate request.</div>
+<span class="cmds">openssl req -new -config cyberHashira.cnf -nodes -keyout cyberHashira.pri -out cyberHashira.csr</span><br><br>
+
+<div class="notes"> You can examine the generated certificate request using the command below -</div>
+<span class="cmds">openssl req -in cyberhashira.csr -noout -text</span><br><br>
+
+<div class="notes">Now we'll sign the certificate request for a webserver using our CA.</div>
+<span class="cmds">openssl x509 -req -days 730 -in cyberHashira.csr -CA root.cer -CAkey root.pri -CAcreateserial -out cyberHashira.cer</span><br><br>
+<span class="cmds">openssl x509 -req -days 730 -in cyberHashira.csr -CA root.cer -CAkey root.pri -CAcreateserial -out cyberHashira.cer -extensions req_ext -extfile cyberHashira.cnf</span><br><br>
+<hr><br>
+
+<h3> - Useful links </h3>
+https://www.openssl.org/docs/man3.0/man1/openssl-req.html<br>
+https://www.openssl.org/docs/man3.0/man5/x509v3_config.html
+<br><br>
+</html>

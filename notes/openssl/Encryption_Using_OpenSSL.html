@@ -1,131 +1,127 @@
 <!DOCTYPE html>
+<head>
+	<title>CyberHashira | OpenSSL | Performing Encryption.</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="This video tutorial series teaches you how to use the OpenSSL utility. OpenSSL is a highly popular cryptographic tool. My goal is to cover every feature of OpenSSL eventually. Whether you're a beginner or an advanced user, I'm sure there will be something for you.">
+	<meta name="keywords" content="OpenSSL, OpenSSL Tutorials, Generating Keys using OpenSSL, Generating Certificates using OpenSSL, OpenSSL CA, Encryption using OpenSSL, Signing Using OpenSSL.">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../css/style.css">
 
-<html>
-	<head>
-		<title>CyberHashira | OpenSSL > Notes > Encryption_Using_OpenSSL </title>
-	</head>
-
-<pre>
-
-Confidentiality using OpenSSL
-------------------------------
-
-Generating secret keys
------------------------
-
-# Generate 16 bytes of random data
-openssl rand -hex 16
-
-# Generate 32 bytes of random hex formatted data
-openssl rand -hex 32
-
-# Generate 32 bytes of random base64 encoded data
-openssl rand -base64 32
-
-# Generate 32 bytes of random hex formatted data and save it to a file.
-openssl rand -hex -out some_data 32
+<h1>Performing Encryption using OpenSSL</h1><br>
 
 
+<h3> - Generating secret keys</h3>
 
-Generating Asymmetric Keys
----------------------------
+<div class="notes"> - Generate 16 bytes of random data.</div>
+<span class="cmds">openssl rand -hex 16</span><br><br>
 
-# Generating a RSA private key
-openssl genrsa
+<div class="notes"> - Generate 32 bytes of random hex formatted data.</div>
+<span class="cmds">openssl rand -hex 32</span><br><br>
 
-# Generating a RSA private key with a specified keysize
-openssl genrsa 1024
-openssl genrsa 2048
+<div class="notes"> - Generate 32 bytes of random base64 encoded data.</div>
+<span class="cmds">openssl rand -base64 32</span><br><br>
 
-# Storing private key to a file.
-openssl genrsa > key.pri
-openssl genrsa -out key.pri
+<div class="notes"> - Generate 32 bytes of random hex formatted data and save it to a file.</div>
+<span class="cmds">openssl rand -hex -out some_data 32</span><br><br>
+<hr><br>
 
-# Examining a private key
-openssl rsa -in key.pri -noout -text
-
-# Generating a public key
-openssl rsa -in key.pri -out key.pub -pubout
+<h3> - Generating Asymmetric Keys</h3>
 
 
+<div class="notes"> - Generating a RSA private key.</div>
+<span class="cmds">openssl genrsa</span><br><br>
 
-Get the list of options/algorithms
------------------------------------
+<div class="notes"> - Generating a RSA private key with a specified keysize.</div>
+<span class="cmds">openssl genrsa 1024</span><br>
+<span class="cmds">openssl genrsa 2048</span><br><br>
 
-# List of all available commands
-openssl list -commands
+<div class="notes"> - Storing private key to a file.</div>
+<span class="cmds">openssl genrsa > key.pri</span><br>
+<span class="cmds">openssl genrsa -out key.pri</span><br><br>
+
+<div class="notes"> - Examining a private key.</div>
+<span class="cmds">openssl rsa -in key.pri -noout -text</span><br><br>
+
+<div class="notes"> - Generating a public key.</div>
+<span class="cmds">openssl rsa -in key.pri -out key.pub -pubout</span><br><br>
+<hr><br>
+
+
+<h3> - Get the list of options/algorithms</h3>
+<div class="notes"> - List of all available commands.</div>
+<span class="cmds">openssl list -commands</span><br><br>
  
-# Getting the list of all digest algorithms
-openssl list -digest-algorithms
+<div class="notes"> - Getting the list of all digest algorithms.</div>
+<span class="cmds">openssl list -digest-algorithms</span><br><br>
 
-# List all cipher algorithms
-openssl list -cipher-algorithms
+<div class="notes"> - List all cipher algorithms.</div>
+<span class="cmds">openssl list -cipher-algorithms</span><br><br>
 
-# List all public key algorithms
-openssl list -public-key-algorithms
+<div class="notes"> - List all public key algorithms.</div>
+<span class="cmds">openssl list -public-key-algorithms</span><br><br>
 
-# List disabled features
-openssl list -disabled
+<div class="notes"> - List disabled features.</div>
+<span class="cmds">openssl list -disabled</span><br><br>
 
-# List options for a command.
-openssl list -options aria-128-ctr
-
-
-
-Encrypting/Decrypting data
------------------------------
-
-# Encrypting a file (warning displayed)
-openssl aes-256-cbc -in Earth.txt -out Earth.enc -e -kfile encryption.key
-
-# Decrypting an encrypted file. (warning displayed)
-openssl aes-256-cbc -in Earth.enc -out Earth.dec -d -kfile encryption.key
-
-# Using another mechanism to encrypt and decrypt
-openssl des-ede3-cbc -in Earth.txt -out Earth.enc -e -a
-openssl des-ede3-cbc -in Earth.enc -out Earth.dec -d -a
-
-# Encrypt data with pbkdf2 and produce a Base64 encoded encrypted file.
-openssl aes-256-cbc -e -a -kfile encryption.key -pbkdf2 -in Earth.txt -out Earth.enc
-
-# Decrypt encrypted data 
-openssl aes-256-cbc -d -a -kfile encryption.key -pbkdf2 -in Earth.enc -out Earth.dec
-
-# Encrypting using PBKDF2
-openssl enc -aes-256-ctr -in Earth.txt -out Earth.enc -e -a -pbkdf2 -iter 40000
-
-# Decrypting encrypted file.
-openssl enc -aes-256-ctr -in Earth.enc -out Earth.dec -d -a -pbkdf2 -iter 40000
-
-# Print verbose output
-openssl aes-256-cbc -in Earth.txt -a -e -out Earth.enc -pbkdf2 -iter 40000 -v
-
-# Print debug information
-openssl aes-256-cbc -in Earth.txt -a -e -out Earth.enc -pbkdf2 -iter 40000 -debug
-
-# Encrypting using RSA public key
-openssl rsautl -encrypt -inkey key.pub -pubin -in Earth.txt -out Earth.enc
-
-# Decrypting using RSA private key
-openssl rsautl -decrypt -inkey key.pri -in Earth.enc -out Earth.dec
+<div class="notes"> - List options for a command.</div>
+<span class="cmds">openssl list -options aria-128-ctr</span><br><br>
+<hr><br>
 
 
-Note : RSA encryption using OpenSSL uses PKCS1 padding by default. PKCS1 has a size limit of (keysize - 11 bytes).
-# Key Size limit
-https://www.rfc-editor.org/rfc/rfc2313
-"The length of the data D shall not be more than k-11 octets"
+<h3> - Encrypting/Decrypting data</h3>
 
-openssl rand -out data 245
-openssl rsautl -encrypt -inkey key.pub -pubin -in data -out data.enc # should work
+<div class="notes"> - Encrypting a file (warning displayed).</div>
+<span class="cmds">openssl aes-256-cbc -in Earth.txt -out Earth.enc -e -kfile encryption.key</span><br><br>
 
-openssl rand -out data 246
-openssl rsautl -encrypt -inkey key.pub -pubin -in data -out data.enc # Will fail
+<div class="notes"> - Decrypting an encrypted file. (warning displayed).</div>
+<span class="cmds">openssl aes-256-cbc -in Earth.enc -out Earth.dec -d -kfile encryption.key</span><br><br>
 
-# Encrypting a secret key using RSA keypair.
-openssl rand -hex -out encryption.key 32
-openssl rsautl -encrypt -inkey key.pub -pubin -in encryption.key -out encryption.key.enc
-openssl rsautl -decrypt -inkey key.pri -in encryption.key.enc -out encryption.key.dec
+<div class="notes"> - Using another mechanism to encrypt and decrypt.</div>
+<span class="cmds">openssl des-ede3-cbc -in Earth.txt -out Earth.enc -e -a</span><br>
+<span class="cmds">openssl des-ede3-cbc -in Earth.enc -out Earth.dec -d -a</span><br><br>
 
-</pre>
+<div class="notes"> - Encrypt data with pbkdf2 and produce a Base64 encoded encrypted file.</div>
+<span class="cmds">openssl aes-256-cbc -e -a -kfile encryption.key -pbkdf2 -in Earth.txt -out Earth.enc</span><br><br>
+
+<div class="notes"> - Decrypt encrypted data.</div>
+<span class="cmds">openssl aes-256-cbc -d -a -kfile encryption.key -pbkdf2 -in Earth.enc -out Earth.dec</span><br><br>
+
+<div class="notes"> - Encrypting using PBKDF2.</div>
+<span class="cmds">openssl enc -aes-256-ctr -in Earth.txt -out Earth.enc -e -a -pbkdf2 -iter 40000</span><br><br>
+
+<div class="notes"> - Decrypting encrypted file.</div>
+<span class="cmds">openssl enc -aes-256-ctr -in Earth.enc -out Earth.dec -d -a -pbkdf2 -iter 40000</span><br><br>
+
+<div class="notes"> - Print verbose output.</div>
+<span class="cmds">openssl aes-256-cbc -in Earth.txt -a -e -out Earth.enc -pbkdf2 -iter 40000 -v</span><br><br>
+
+<div class="notes"> - Print debug information.</div>
+<span class="cmds">openssl aes-256-cbc -in Earth.txt -a -e -out Earth.enc -pbkdf2 -iter 40000 -debug</span><br><br>
+
+<div class="notes"> - Encrypting using RSA public key.</div>
+<span class="cmds">openssl rsautl -encrypt -inkey key.pub -pubin -in Earth.txt -out Earth.enc</span><br><br>
+
+<div class="notes"> - Decrypting using RSA private key.</div>
+<span class="cmds">openssl rsautl -decrypt -inkey key.pri -in Earth.enc -out Earth.dec</span><br><br>
+
+<div class="notes">
+	<pre>
+	Note : RSA encryption using OpenSSL uses PKCS1 padding by default. PKCS1 has a size limit of (keysize - 11 bytes).
+	# Key Size limit
+	https://www.rfc-editor.org/rfc/rfc2313
+	"The length of the data D shall not be more than k-11 octets"
+	</pre>
+</div>
+
+<span class="cmds">openssl rand -out data 245</span><br>
+<span class="cmds">openssl rsautl -encrypt -inkey key.pub -pubin -in data -out data.enc (WORKS).</span><br><br>
+<span class="cmds">openssl rand -out data 246</span><br>
+<span class="cmds">openssl rsautl -encrypt -inkey key.pub -pubin -in data -out data.enc (FAILS).</span><br><br>
+
+<div class="notes"> - Encrypting a secret key using RSA keypair.</div>
+<span class="cmds">openssl rand -hex -out encryption.key 32</span><br>
+<span class="cmds">openssl rsautl -encrypt -inkey key.pub -pubin -in encryption.key -out encryption.key.enc</span><br>
+<span class="cmds">openssl rsautl -decrypt -inkey key.pri -in encryption.key.enc -out encryption.key.dec</span><br><br>
 
 </html>

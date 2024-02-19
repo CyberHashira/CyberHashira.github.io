@@ -1,48 +1,52 @@
 <!DOCTYPE html>
+<head>
+	<title>CyberHashira | OpenSSL | Digital Signatures.</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="This video tutorial series teaches you how to use the OpenSSL utility. OpenSSL is a highly popular cryptographic tool. My goal is to cover every feature of OpenSSL eventually. Whether you're a beginner or an advanced user, I'm sure there will be something for you.">
+	<meta name="keywords" content="OpenSSL, OpenSSL Tutorials, Generating Keys using OpenSSL, Generating Certificates using OpenSSL, OpenSSL CA, Encryption using OpenSSL, Signing Using OpenSSL.">
+	<meta name="author" content="Cyber Hashira">
+</head>
+<link rel="stylesheet" href="../../css/style.css">
 
-<html>
-        <head>
-                <title>CyberHashira | OpenSSL > Notes > Digital_Signatures_Using_OpenSSL </title>
-        </head>
+<h1>Digital Signatures using OpenSSL</h1>
+<br>
+<h3> - Simple RSA Sign/Verify.</h3>
+<div class="notes">Using an RSA keypair to sign a text file and output the signature to another file.</div>
+<span class="cmds">openssl rsautl -sign -inkey rsa.pri -in jack_and_gill.txt -out jack_and_gill.sig</span><br>
+<span class="cmds">openssl rsautl -verify -inkey rsa.pub -pubin -in jack_and_gill.sig</span><br><br>
 
-<pre>
+<h3> - Using hash based signing methods to sign/verify.</h3>
+<div class="notes">Sign a text file using sha1withRSA signing algorithm.</div>
+<span class="cmds">openssl sha1 -sign rsa.pri -out jack_and_gill.sig jack_and_gill.txt</span><br>
+<span class="cmds">openssl sha1 -verify rsa.pub -signature jack_and_gill.sha1 jack_and_gill.txt</span><br><br>
 
-# Simple RSA Sign/Verify
-openssl rsautl -sign -inkey rsa.pri -in jack_and_gill.txt -out jack_and_gill.sig
-openssl rsautl -verify -inkey rsa.pub -pubin -in jack_and_gill.sig
-
-
-# Using hash based signing methods to sign/verify
-openssl sha1 -sign rsa.pri -out jack_and_gill.sig jack_and_gill.txt
-openssl sha1 -verify rsa.pub -signature jack_and_gill.sha1 jack_and_gill.txt
-
-openssl sha256 -sign rsa.pri -out jack_and_gill.sha256 jack_and_gill.txt
-openssl sha256 -verify rsa.pub -signature jack_and_gill.sha256 jack_and_gill.txt
-
-
-# Get the list of all supported digest
-openssl dgst -list
-
-
-# Alternate way to sign/verify using hashed based signing algorithm
-openssl dgst -sha256 -sign rsa.pri -out jack_and_gill.sha256 jack_and_gill.txt
-openssl dgst -sha256 -verify rsa.pub -signature jack_and_gill.sha256 jack_and_gill.txt
+<div class="notes">Sign a text file using sha256withRSA signing algorithm.</div>
+<span class="cmds">openssl sha256 -sign rsa.pri -out jack_and_gill.sha256 jack_and_gill.txt</span><br>
+<span class="cmds">openssl sha256 -verify rsa.pub -signature jack_and_gill.sha256 jack_and_gill.txt</span><br><br>
 
 
-# Sign/Verify using ECDSA keys.
-openssl dgst -sha256 -sign ecdsa.pri -out jack_and_gill.sig jack_and_gill.txt
-openssl dgst -sha256 -verify ecdsa.pub -signature jack_and_gill.sig jack_and_gill.txt
+<h3> - Viewing the list of all supported digest.</h3>
+<span class="cmds">openssl dgst -list</span><br><br>
 
 
-# Using PSS padding scheme for signing data.
-openssl dgst -sha256 -sign rsa.pri -sigopt rsa_padding_mode:pss -out jack_and_gill.txt.sig jack_and_gill.txt
-openssl dgst -sha256 -verify rsa.pub -sigopt rsa_padding_mode:pss -signature jack_and_gill.txt.sig jack_and_gill.txt
+<h3> - Alternate way to sign/verify using hashed based signing algorithm.</h3>
+<span class="cmds">openssl dgst -sha256 -sign rsa.pri -out jack_and_gill.sha256 jack_and_gill.txt</span><br>
+<span class="cmds">openssl dgst -sha256 -verify rsa.pub -signature jack_and_gill.sha256 jack_and_gill.txt</span><br><br>
 
 
-# Using openssl pkeyutl option to sign
-openssl sha256 -binary -out hash jack_and_gill.txt
-openssl pkeyutl -sign -in hash -inkey rsa.pri -out jack_and_gill.txt.sig -pkeyopt digest:sha256
-openssl pkeyutl -verify -inkey rsa.pub -pubin -sigfile jack_and_gill.txt.sig -in hash -pkeyopt digest:sha256
+<h3> - Sign/Verify using ECDSA keys.</h3>
+<span class="cmds">openssl dgst -sha256 -sign ecdsa.pri -out jack_and_gill.sig jack_and_gill.txt</span><br>
+<span class="cmds">openssl dgst -sha256 -verify ecdsa.pub -signature jack_and_gill.sig jack_and_gill.txt</span><br><br>
 
-</pre>
+
+<h3> - Sign a text file using RSA-PSS (Probabilistic Signature Scheme).</h3>
+<span class="cmds">openssl dgst -sha256 -sign rsa.pri -sigopt rsa_padding_mode:pss -out jack_and_gill.txt.sig jack_and_gill.txt</span><br>
+<span class="cmds">openssl dgst -sha256 -verify rsa.pub -sigopt rsa_padding_mode:pss -signature jack_and_gill.txt.sig jack_and_gill.txt</span><br><br>
+
+
+<h3> - Using openssl pkeyutl option to sign.</h3>
+<span class="cmds">openssl sha256 -binary -out hash jack_and_gill.txt</span><br>
+<span class="cmds">openssl pkeyutl -sign -in hash -inkey rsa.pri -out jack_and_gill.txt.sig -pkeyopt digest:sha256</span><br>
+<span class="cmds">openssl pkeyutl -verify -inkey rsa.pub -pubin -sigfile jack_and_gill.txt.sig -in hash -pkeyopt digest:sha256</span><br><br>
+
 </html>
